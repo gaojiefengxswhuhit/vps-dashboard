@@ -1,0 +1,923 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>xushuo 云服务总控台</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f1117;
+      --bg2: #151823;
+      --card: rgba(28, 32, 43, 0.92);
+      --card2: rgba(37, 42, 56, 0.92);
+      --line: rgba(255,255,255,0.09);
+      --text: #eef2ff;
+      --muted: #a6adbb;
+      --muted2: #7f8796;
+      --blue: #86a7ff;
+      --green: #69db7c;
+      --yellow: #ffd43b;
+      --red: #ff8787;
+      --purple: #c084fc;
+      --cyan: #66d9e8;
+      --shadow: 0 20px 70px rgba(0,0,0,.32);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(134,167,255,.18), transparent 32rem),
+        radial-gradient(circle at 88% 12%, rgba(192,132,252,.12), transparent 30rem),
+        linear-gradient(180deg, #131722 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 54px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+
+    .hero-main,
+    .hero-side,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-main {
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      right: -90px;
+      top: -120px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(134,167,255,.22), transparent 68%);
+      pointer-events: none;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(134,167,255,.12);
+      border: 1px solid rgba(134,167,255,.22);
+      color: #dbe4ff;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.25rem, 6vw, 4.5rem);
+      line-height: 1.04;
+      letter-spacing: -0.06em;
+    }
+
+    .lead {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1.04rem;
+      line-height: 1.9;
+      max-width: 760px;
+    }
+
+    .hero-side {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      background: var(--card2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .metric .num {
+      font-size: 1.7rem;
+      font-weight: 850;
+      letter-spacing: -0.04em;
+    }
+
+    .metric .label {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 26px;
+    }
+
+    .btn,
+    button.btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--card2);
+      color: var(--text);
+      border-radius: 13px;
+      padding: 10px 13px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: .14s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover,
+    button.btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(134,167,255,.55);
+      filter: brightness(1.05);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #86a7ff, #c084fc);
+      color: #080b12;
+      border-color: transparent;
+    }
+
+    .btn.green {
+      background: rgba(105,219,124,.14);
+      border-color: rgba(105,219,124,.26);
+      color: #d3f9d8;
+    }
+
+    .btn.warn {
+      background: rgba(255,212,59,.12);
+      border-color: rgba(255,212,59,.22);
+      color: #fff3bf;
+    }
+
+    .btn.disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .section {
+      margin-top: 28px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 13px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 1.15rem;
+      letter-spacing: .02em;
+    }
+
+    .section-desc {
+      color: var(--muted2);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.services {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.vps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .card h2,
+    .card h3 {
+      margin: 0;
+      font-size: 1.12rem;
+      line-height: 1.35;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.online {
+      color: #d3f9d8;
+      border-color: rgba(105,219,124,.24);
+      background: rgba(105,219,124,.12);
+    }
+
+    .badge.todo {
+      color: #fff3bf;
+      border-color: rgba(255,212,59,.24);
+      background: rgba(255,212,59,.11);
+    }
+
+    .badge.cf {
+      color: #dbe4ff;
+      border-color: rgba(134,167,255,.24);
+      background: rgba(134,167,255,.11);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(105,219,124,.65);
+    }
+
+    .meta {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 14px;
+      margin: 12px 0 14px;
+    }
+
+    code,
+    .cmd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    code {
+      background: rgba(0,0,0,.25);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 2px 6px;
+      color: #e9ecef;
+      word-break: break-all;
+    }
+
+    .cmdbox {
+      background: rgba(0,0,0,.26);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0 12px;
+    }
+
+    .cmd {
+      color: #dbe4ff;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: auto;
+      padding-bottom: 2px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: var(--card);
+    }
+
+    .table th,
+    .table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .table th {
+      color: var(--muted);
+      font-weight: 800;
+      background: rgba(255,255,255,.035);
+    }
+
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #202637;
+      color: var(--text);
+      border: 1px solid rgba(134,167,255,.28);
+      box-shadow: var(--shadow);
+      border-radius: 16px;
+      padding: 12px 14px;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: .18s ease;
+      z-index: 99;
+      max-width: min(460px, calc(100% - 36px));
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mini {
+      font-size: 12px;
+      color: var(--muted2);
+    }
+
+    .callout {
+      border: 1px solid rgba(134,167,255,.22);
+      background: rgba(134,167,255,.08);
+      border-radius: 20px;
+      padding: 16px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .grid.services,
+      .grid.vps,
+      .grid.two {
+        grid-template-columns: 1fr;
+      }
+
+      .summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wrap {
+        width: min(100% - 22px, 1180px);
+        padding-top: 18px;
+      }
+
+      .hero-main,
+      .hero-side,
+      .card {
+        border-radius: 18px;
+      }
+
+      .hero-main {
+        padding: 22px;
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .cmdbox {
+        grid-template-columns: 1fr;
+      }
+
+      .table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="kicker">☁️ xushuo cloud console</div>
+        <h1>xushuo 云服务总控台</h1>
+        <p class="lead">
+          这里统一记录 VPS、Cloudflare、OpenList、R2、Hugo 博客、Telegram Bot、哪吒面板和常用登录命令。
+          这个页面不直接保存私钥，不做 WebSSH；需要登录时复制命令到 Windows PowerShell 执行。
+        </p>
+      </div>
+
+      <aside class="hero-side">
+        <div class="summary">
+          <div class="metric">
+            <div class="num">6/6</div>
+            <div class="label">VPS 在线记录</div>
+          </div>
+          <div class="metric">
+            <div class="num">5+</div>
+            <div class="label">Cloudflare 服务</div>
+          </div>
+          <div class="metric">
+            <div class="num">R2</div>
+            <div class="label">小文件存储</div>
+          </div>
+          <div class="metric">
+            <div class="num">Bot</div>
+            <div class="label">Telegram 运维入口</div>
+          </div>
+        </div>
+        <div class="mini">当前页面为静态面板。实时数据以后可从哪吒 / Telegram Bot JSON 接入。</div>
+      </aside>
+    </section>
+
+    <nav class="nav">
+      <a class="btn primary" href="#services">服务入口</a>
+      <a class="btn" href="#vps">VPS 登录</a>
+      <a class="btn" href="#bot">Telegram Bot</a>
+      <a class="btn" href="#cloudflare">Cloudflare 架构</a>
+      <a class="btn" href="#commands">维护命令</a>
+    </nav>
+
+    <section id="services" class="section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">服务入口</h2>
+          <div class="section-desc">xushuo.uk 作为主域名，gaojiefeng.uk 作为旧域名/正式身份域名保留。</div>
+        </div>
+      </div>
+
+      <div class="grid services">
+        <article class="card">
+          <div class="card-top">
+            <h3>📝 Hugo 博客</h3>
+            <span class="badge online"><span class="dot"></span>已上线</span>
+          </div>
+          <div class="meta">
+            域名：<code>blog.xushuo.uk</code><br>
+            平台：Cloudflare Pages<br>
+            源码：GitHub <code>blog-gaojiefeng</code>
+          </div>
+          <div class="actions">
+            <a class="btn primary" href="https://blog.xushuo.uk" target="_blank">打开博客</a>
+            <button class="btn" onclick="copyText('https://blog.xushuo.uk')">复制链接</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>📦 OpenList 网盘</h3>
+            <span class="badge online"><span class="dot"></span>已上线</span>
+          </div>
+          <div class="meta">
+            域名：<code>pan.xushuo.uk</code><br>
+            后端：Azure SG <code>127.0.0.1:5244</code><br>
+            入口：Cloudflare Tunnel <code>azure-sg-pan</code>
+          </div>
+          <div class="actions">
+            <a class="btn primary" href="https://pan.xushuo.uk" target="_blank">打开网盘</a>
+            <button class="btn" onclick="copyText('https://pan.xushuo.uk')">复制链接</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>⬇️ R2 下载站</h3>
+            <span class="badge online"><span class="dot"></span>已上线</span>
+          </div>
+          <div class="meta">
+            域名：<code>dl.xushuo.uk</code><br>
+            存储：R2 Bucket <code>gaojiefeng-dl</code><br>
+            用途：公开小文件直链下载
+          </div>
+          <div class="actions">
+            <a class="btn primary" href="https://dl.xushuo.uk" target="_blank">打开下载站</a>
+            <button class="btn" onclick="copyText('https://dl.xushuo.uk')">复制链接</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>📁 小文件网页</h3>
+            <span class="badge online"><span class="dot"></span>已上线</span>
+          </div>
+          <div class="meta">
+            域名：<code>files.xushuo.uk</code><br>
+            平台：Cloudflare Worker + R2<br>
+            用途：网页登录、上传、删除、复制链接
+          </div>
+          <div class="actions">
+            <a class="btn primary" href="https://files.xushuo.uk" target="_blank">打开小文件网盘</a>
+            <button class="btn" onclick="copyText('https://files.xushuo.uk')">复制链接</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>🖥️ VPS 面板</h3>
+            <span class="badge todo">规划中</span>
+          </div>
+          <div class="meta">
+            域名：<code>vps.xushuo.uk</code><br>
+            平台：Cloudflare Pages<br>
+            用途：当前这个总控台，记录机器、服务和登录命令
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="copyText('https://vps.xushuo.uk')">复制入口</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>📊 哪吒面板</h3>
+            <span class="badge todo">待接入</span>
+          </div>
+          <div class="meta">
+            目标域名：<code>status.xushuo.uk</code><br>
+            当前入口：<code>http://103.122.247.99:8008</code><br>
+            用途：VPS 在线、CPU、内存、流量、告警
+          </div>
+          <div class="actions">
+            <a class="btn primary" href="http://103.122.247.99:8008" target="_blank">打开当前面板</a>
+            <button class="btn" onclick="copyText('http://103.122.247.99:8008')">复制当前入口</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="vps" class="section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">VPS 登录与用途</h2>
+          <div class="section-desc">点击复制 SSH 命令，然后粘贴到 Windows PowerShell 执行。</div>
+        </div>
+      </div>
+
+      <div class="grid vps">
+        <article class="card">
+          <div class="card-top">
+            <h3>🇭🇰 HK39</h3>
+            <span class="badge online"><span class="dot"></span>在线</span>
+          </div>
+          <div class="meta">
+            IP：<code>103.122.247.99</code><br>
+            端口：<code>8008</code><br>
+            用途：Telegram Bot / 哪吒 / 监控 / 行情提醒
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">ssh -i "D:\Download\xushuo_key.pem" root@103.122.247.99</div>
+            <button class="btn" onclick="copyText('ssh -i &quot;D:\\Download\\xushuo_key.pem&quot; root@103.122.247.99')">复制</button>
+          </div>
+          <div class="actions">
+            <a class="btn" href="http://103.122.247.99:8008" target="_blank">哪吒</a>
+            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 bot.log')">复制 Bot 日志命令</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>🇰🇷 Azure KR</h3>
+            <span class="badge online"><span class="dot"></span>在线</span>
+          </div>
+          <div class="meta">
+            IP：<code>20.196.247.193</code><br>
+            端口：<code>443</code><br>
+            用途：Reality 节点 <code>azure-kr-reality-cf</code>
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">ssh -i "D:\Download\xushuo_key.pem" azureuser@20.196.247.193</div>
+            <button class="btn" onclick="copyText('ssh -i &quot;D:\\Download\\xushuo_key.pem&quot; azureuser@20.196.247.193')">复制</button>
+          </div>
+          <div class="actions">
+            <button class="btn" onclick="copyText('sudo -i')">复制 sudo</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>🇸🇬 Azure SG</h3>
+            <span class="badge online"><span class="dot"></span>在线</span>
+          </div>
+          <div class="meta">
+            IP：<code>20.212.17.214</code><br>
+            端口：<code>443</code> / <code>5244</code><br>
+            用途：OpenList / cloudflared / Reality
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">ssh -i "D:\Download\xushuo_key.pem" azureuser@20.212.17.214</div>
+            <button class="btn" onclick="copyText('ssh -i &quot;D:\\Download\\xushuo_key.pem&quot; azureuser@20.212.17.214')">复制</button>
+          </div>
+          <div class="actions">
+            <a class="btn" href="https://pan.xushuo.uk" target="_blank">OpenList</a>
+            <button class="btn" onclick="copyText('systemctl status cloudflared --no-pager -l')">复制 Tunnel 状态</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>🇯🇵 JP NAT</h3>
+            <span class="badge online"><span class="dot"></span>在线</span>
+          </div>
+          <div class="meta">
+            IP：<code>154.36.187.99</code><br>
+            端口：<code>51046</code><br>
+            备注：按当前 Bot 记录暂写为 NAT 登录端口
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">ssh root@154.36.187.99 -p 51046</div>
+            <button class="btn" onclick="copyText('ssh root@154.36.187.99 -p 51046')">复制</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>🇩🇪 DE Long</h3>
+            <span class="badge online"><span class="dot"></span>在线</span>
+          </div>
+          <div class="meta">
+            IP：<code>89.144.8.91</code><br>
+            端口：<code>50426</code><br>
+            备注：长期德国 NAT / 按当前 Bot 记录
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">ssh root@89.144.8.91 -p 50426</div>
+            <button class="btn" onclick="copyText('ssh root@89.144.8.91 -p 50426')">复制</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>🇩🇪 DE Short</h3>
+            <span class="badge online"><span class="dot"></span>在线</span>
+          </div>
+          <div class="meta">
+            IP：<code>89.106.78.178</code><br>
+            端口：<code>34244</code><br>
+            备注：短期德国 NAT / 按当前 Bot 记录
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">ssh root@89.106.78.178 -p 34244</div>
+            <button class="btn" onclick="copyText('ssh root@89.106.78.178 -p 34244')">复制</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="bot" class="section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Telegram Bot 与 HK39 运维</h2>
+          <div class="section-desc">Bot 运行在 HK39，负责 /vps、行情提醒、网盘入口、服务状态等。</div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <article class="card">
+          <div class="card-top">
+            <h3>🤖 Telegram Bot</h3>
+            <span class="badge cf">HK39</span>
+          </div>
+          <div class="meta">
+            路径：<code>/root/tg-node-bot</code><br>
+            主程序：<code>bot.py</code><br>
+            日志：<code>bot.log</code>
+          </div>
+          <div class="actions">
+            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 bot.log')">复制查看日志</button>
+            <button class="btn" onclick="copyText('cd /root/tg-node-bot && pkill -f bot.py; nohup python3 bot.py > bot.log 2>&1 &')">复制重启 Bot</button>
+            <button class="btn" onclick="copyText('/vps')">复制 /vps</button>
+            <button class="btn" onclick="copyText('/pan')">复制 /pan</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>📈 行情与提醒</h3>
+            <span class="badge cf">Bot 功能</span>
+          </div>
+          <div class="meta">
+            负责市场提醒、VPS 掉线/恢复通知、常用入口菜单。<br>
+            后续可以把 /vps 的数据输出成 JSON，让本页面显示实时状态。
+          </div>
+          <div class="actions">
+            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 market_alert.log')">复制行情日志命令</button>
+            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 oracle_a1_monitor.log')">复制 Oracle 日志命令</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="cloudflare" class="section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Cloudflare 服务结构</h2>
+          <div class="section-desc">Pages / Tunnel / R2 / Worker 分工明确。</div>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>域名</th>
+            <th>类型</th>
+            <th>后端 / 源码</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>blog.xushuo.uk</code></td>
+            <td>Cloudflare Pages</td>
+            <td>GitHub <code>blog-gaojiefeng</code> / Hugo</td>
+            <td>博客、文档、折腾记录</td>
+          </tr>
+          <tr>
+            <td><code>pan.xushuo.uk</code></td>
+            <td>Cloudflare Tunnel</td>
+            <td>Azure SG <code>127.0.0.1:5244</code></td>
+            <td>OpenList 真网盘</td>
+          </tr>
+          <tr>
+            <td><code>dl.xushuo.uk</code></td>
+            <td>R2 Custom Domain</td>
+            <td>R2 Bucket <code>gaojiefeng-dl</code></td>
+            <td>公开下载直链</td>
+          </tr>
+          <tr>
+            <td><code>files.xushuo.uk</code></td>
+            <td>Worker + R2</td>
+            <td>Worker <code>gaojiefeng-files</code> / R2 Binding <code>BUCKET</code></td>
+            <td>网页登录上传、删除、复制链接</td>
+          </tr>
+          <tr>
+            <td><code>vps.xushuo.uk</code></td>
+            <td>Cloudflare Pages</td>
+            <td>GitHub <code>vps-dashboard</code></td>
+            <td>当前总控台 / 登录命令面板</td>
+          </tr>
+          <tr>
+            <td><code>status.xushuo.uk</code></td>
+            <td>计划：Tunnel / 反代</td>
+            <td>HK39 <code>103.122.247.99:8008</code></td>
+            <td>哪吒面板入口</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="commands" class="section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">常用维护命令</h2>
+          <div class="section-desc">登录对应机器后执行。这里主要负责复制，不直接执行。</div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <article class="card">
+          <div class="card-top">
+            <h3>Azure SG：OpenList / Tunnel</h3>
+            <span class="badge cf">20.212.17.214</span>
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">curl -L http://127.0.0.1:5244 | head</div>
+            <button class="btn" onclick="copyText('curl -L http://127.0.0.1:5244 | head')">复制</button>
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">systemctl status cloudflared --no-pager -l</div>
+            <button class="btn" onclick="copyText('systemctl status cloudflared --no-pager -l')">复制</button>
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">journalctl -u cloudflared -n 80 --no-pager</div>
+            <button class="btn" onclick="copyText('journalctl -u cloudflared -n 80 --no-pager')">复制</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>HK39：Bot / 哪吒</h3>
+            <span class="badge cf">103.122.247.99</span>
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">cd /root/tg-node-bot && tail -n 120 bot.log</div>
+            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 bot.log')">复制</button>
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">cd /root/tg-node-bot && ps aux | grep '[b]ot.py'</div>
+            <button class="btn" onclick="copyText('cd /root/tg-node-bot && ps aux | grep \\'[b]ot.py\\'')">复制</button>
+          </div>
+          <div class="cmdbox">
+            <div class="cmd">ss -lntp | grep -E ':8008|:22'</div>
+            <button class="btn" onclick="copyText('ss -lntp | grep -E \\':8008|:22\\'')">复制</button>
+          </div>
+        </article>
+      </div>
+
+      <div class="callout" style="margin-top:14px">
+        <strong>说明：</strong>
+        JP NAT、DE Long、DE Short 当前页面按 Bot 输出端口生成 SSH 命令。如果这些端口只是“服务探测端口”而不是 SSH 端口，后续把卡片里的命令改成正确 SSH 端口即可。
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast">已复制</div>
+
+  <script>
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("已复制：" + text);
+      } catch (e) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast("已复制：" + text);
+      }
+    }
+
+    let toastTimer = null;
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+    }
+  </script>
+</body>
+</html>
