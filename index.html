@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
@@ -510,6 +510,57 @@
       <a class="btn" href="#commands">维护命令</a>
     </nav>
 
+    
+    <section id="live-status" class="section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">实时状态</h2>
+          <div class="section-desc">
+            数据来自 HK39 每分钟推送到 R2 的 JSON。上次更新：<span id="live-updated">加载中</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid services" id="live-summary-grid">
+        <article class="card">
+          <div class="card-top">
+            <h3>📡 VPS 在线</h3>
+            <span class="badge cf">Live</span>
+          </div>
+          <div class="metric">
+            <div class="num" id="live-online">--/--</div>
+            <div class="label">在线 / 总数</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>🔄 自动刷新</h3>
+            <span class="badge cf">30s</span>
+          </div>
+          <div class="meta">
+            页面每 30 秒读取一次 R2 JSON，HK39 每分钟上传一次。
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3>🧭 数据源</h3>
+            <span class="badge cf">R2 JSON</span>
+          </div>
+          <div class="meta">
+            <code>dl.xushuo.uk/status/vps-status.json</code>
+          </div>
+        </article>
+      </div>
+
+      <div class="grid vps" id="live-server-grid" style="margin-top:14px">
+        <article class="card">
+          <div class="meta">正在加载实时 VPS 状态……</div>
+        </article>
+      </div>
+    </section>
+
     <section id="services" class="section">
       <div class="section-head">
         <div>
@@ -919,5 +970,106 @@
       toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
     }
   </script>
+
+  <script>
+    async function loadLiveStatus() {
+      const grid = document.getElementById("live-server-grid");
+      const onlineEl = document.getElementById("live-online");
+      const updatedEl = document.getElementById("live-updated");
+
+      if (!grid || !onlineEl || !updatedEl) return;
+
+      try {
+        const res = await fetch("https://dl.xushuo.uk/status/vps-status.json?ts=" + Date.now(), {
+          cache: "no-store"
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          throw new Error(data.error || "status json success=false");
+        }
+
+        onlineEl.textContent = `${data.summary.online}/${data.summary.total}`;
+
+        const updated = new Date(data.updated_at);
+        updatedEl.textContent = updated.toLocaleString("zh-CN");
+
+        grid.innerHTML = "";
+
+        for (const s of data.servers) {
+          const card = document.createElement("article");
+          card.className = "card";
+
+          const ports = Array.isArray(s.ports) && s.ports.length
+            ? s.ports.map(p => {
+                const ok = s.port_status && s.port_status[p];
+                return `<code>${escapeHtml(p)}${ok ? "✅" : "❌"}</code>`;
+              }).join(" ")
+            : "-";
+
+          card.innerHTML = `
+            <div class="card-top">
+              <h3>${escapeHtml(s.flag || "🖥️")} ${escapeHtml(s.name || "Unknown")}</h3>
+              <span class="badge ${s.online ? "online" : "todo"}">${s.online ? '<span class="dot"></span>在线' : '离线'}</span>
+            </div>
+            <div class="meta">
+              IP：<code>${escapeHtml(s.ip || "-")}</code><br>
+              端口：${ports}<br>
+              用途：${escapeHtml(s.role || "-")}<br>
+              CPU：<code>${escapeHtml(s.cpu || "-")}</code><br>
+              内存：<code>${escapeHtml(s.memory || "-")}</code><br>
+              硬盘：<code>${escapeHtml(s.disk || "-")}</code><br>
+              流量：<code>${escapeHtml(s.traffic || "-")}</code><br>
+              运行：<code>${escapeHtml(s.uptime || "-")}</code>
+            </div>
+            ${s.ssh ? `
+              <div class="cmdbox">
+                <div class="cmd">${escapeHtml(s.ssh)}</div>
+                <button class="btn" onclick="copyText('${escapeForJs(s.ssh)}')">复制 SSH</button>
+              </div>
+            ` : ""}
+          `;
+
+          grid.appendChild(card);
+        }
+      } catch (e) {
+        grid.innerHTML = `
+          <article class="card">
+            <div class="card-top">
+              <h3>实时状态加载失败</h3>
+              <span class="badge todo">Error</span>
+            </div>
+            <div class="meta">
+              ${escapeHtml(e.message)}<br>
+              先打开 <code>https://dl.xushuo.uk/status/vps-status.json</code> 看 JSON 是否存在；如果 JSON 能打开，就是 R2 CORS 没配好。
+            </div>
+          </article>
+        `;
+        updatedEl.textContent = "加载失败";
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeForJs(value) {
+      return String(value ?? "")
+        .replaceAll("\\", "\\\\")
+        .replaceAll("'", "\\'")
+        .replaceAll("\n", "\\n")
+        .replaceAll("\r", "\\r");
+    }
+
+    loadLiveStatus();
+    setInterval(loadLiveStatus, 30000);
+  </script>
+
 </body>
 </html>
