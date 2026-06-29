@@ -150,6 +150,96 @@
       gap: 18px;
     }
 
+    .route-map {
+      padding: 20px;
+    }
+
+    .route-lane {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+      padding: 16px 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .route-lane:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .route-lane:last-child {
+      padding-bottom: 0;
+    }
+
+    .route-lane-title {
+      display: flex;
+      align-items: center;
+      color: #e9eefc;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.5;
+    }
+
+    .route-flow {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+
+    .route-node {
+      min-height: 104px;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 18px;
+      padding: 13px 14px;
+      background: rgba(255,255,255,0.045);
+      color: #eef3ff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .route-node strong {
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .route-node span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .route-node.cloudflare {
+      background: rgba(251, 191, 36, 0.09);
+      border-color: rgba(251, 191, 36, 0.25);
+    }
+
+    .route-node.origin {
+      background: rgba(74, 222, 128, 0.075);
+      border-color: rgba(74, 222, 128, 0.22);
+    }
+
+    .route-node.edge {
+      background: rgba(115, 224, 255, 0.08);
+      border-color: rgba(115, 224, 255, 0.24);
+    }
+
+    .route-node.local {
+      background: rgba(167, 139, 250, 0.09);
+      border-color: rgba(167, 139, 250, 0.25);
+    }
+
+    .route-arrow {
+      color: var(--cyan);
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      opacity: 0.88;
+    }
+
     .card {
       border: 1px solid var(--border);
       background: var(--card);
@@ -496,6 +586,10 @@
       .service-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
+
+      .route-lane {
+        grid-template-columns: 128px minmax(0, 1fr);
+      }
     }
 
     @media (max-width: 900px) {
@@ -515,6 +609,24 @@
 
       .section-title .desc {
         text-align: left;
+      }
+
+      .route-lane {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .route-lane-title {
+        align-items: flex-start;
+      }
+
+      .route-flow {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .route-arrow {
+        transform: rotate(90deg);
       }
     }
 
@@ -564,7 +676,7 @@
         <span class="pill">📡 HK39 → R2 JSON</span>
         <span class="pill">🔄 页面 30 秒自动刷新</span>
         <span class="pill">🧩 状态与登录合并显示</span>
-        <span class="pill">📋 SSH 一键复制</span>
+        <span class="pill">📋 SSH 一键复制 / 登录</span>
       </div>
     </section>
 
@@ -659,6 +771,140 @@
 
       <div id="serverGrid" class="server-grid">
         <div class="loading">正在加载实时 VPS 状态……</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>云服务技术路线图</h2>
+        <div class="desc">域名入口、Cloudflare 边缘层、源站服务、状态上报和本机运维链路</div>
+      </div>
+
+      <div class="card route-map">
+        <div class="route-lane">
+          <div class="route-lane-title">静态站发布</div>
+          <div class="route-flow">
+            <div class="route-node origin">
+              <strong>GitHub 仓库</strong>
+              <span>blog-gaojiefeng<br>vps-dashboard</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node cloudflare">
+              <strong>Cloudflare Pages</strong>
+              <span>Hugo 博客构建<br>单页总控台静态托管</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node edge">
+              <strong>公开入口</strong>
+              <span>blog.xushuo.uk<br>vps.xushuo.uk</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node">
+              <strong>浏览器访问</strong>
+              <span>博客文章<br>VPS 状态总览</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="route-lane">
+          <div class="route-lane-title">博客在线编辑</div>
+          <div class="route-flow">
+            <div class="route-node">
+              <strong>/admin 后台</strong>
+              <span>Decap CMS<br>文章 / 图片 / 附件</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node cloudflare">
+              <strong>Pages Functions</strong>
+              <span>GitHub OAuth<br>只允许本人账号</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node origin">
+              <strong>提交到 GitHub</strong>
+              <span>content/posts<br>static/uploads</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node edge">
+              <strong>自动重新部署</strong>
+              <span>Cloudflare Pages<br>发布新文章</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="route-lane">
+          <div class="route-lane-title">VPS 监控状态</div>
+          <div class="route-flow">
+            <div class="route-node origin">
+              <strong>各台 VPS</strong>
+              <span>HK / KR / SG / JP / DE<br>端口、资源、流量</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node origin">
+              <strong>HK39 中枢</strong>
+              <span>哪吒面板<br>publish_status.py</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node cloudflare">
+              <strong>Cloudflare R2</strong>
+              <span>vps-status.json<br>dl.xushuo.uk/status</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node edge">
+              <strong>总控台拉取</strong>
+              <span>30 秒刷新<br>状态卡片实时展示</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="route-lane">
+          <div class="route-lane-title">网盘与文件</div>
+          <div class="route-flow">
+            <div class="route-node origin">
+              <strong>Azure SG</strong>
+              <span>OpenList<br>文件管理服务</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node cloudflare">
+              <strong>Cloudflare Tunnel</strong>
+              <span>内网服务出站连接<br>不直接暴露源站端口</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node edge">
+              <strong>访问域名</strong>
+              <span>pan.xushuo.uk<br>files.xushuo.uk</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node">
+              <strong>文件访问</strong>
+              <span>网盘浏览<br>下载与管理</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="route-lane">
+          <div class="route-lane-title">运维登录</div>
+          <div class="route-flow">
+            <div class="route-node">
+              <strong>总控台按钮</strong>
+              <span>复制 SSH<br>一键登录</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node local">
+              <strong>本机 vpsssh://</strong>
+              <span>Windows 协议处理器<br>主机白名单校验</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node local">
+              <strong>PowerShell SSH</strong>
+              <span>D:\Download\xushuo_key.pem<br>自动带端口参数</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node origin">
+              <strong>目标 VPS</strong>
+              <span>HK39 / Azure / NAT<br>进入命令行维护</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
