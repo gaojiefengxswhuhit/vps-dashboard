@@ -1,1054 +1,650 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>xushuo 云服务总控台</title>
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #0f1117;
-      --bg2: #151823;
-      --card: rgba(28, 32, 43, 0.92);
-      --card2: rgba(37, 42, 56, 0.92);
-      --line: rgba(255,255,255,0.09);
-      --text: #eef2ff;
-      --muted: #a6adbb;
-      --muted2: #7f8796;
-      --blue: #86a7ff;
-      --green: #69db7c;
-      --yellow: #ffd43b;
-      --red: #ff8787;
-      --purple: #c084fc;
-      --cyan: #66d9e8;
-      --shadow: 0 20px 70px rgba(0,0,0,.32);
+      --bg: #0b1020;
+      --card: rgba(22, 29, 49, 0.86);
+      --card2: rgba(30, 39, 64, 0.78);
+      --border: rgba(255,255,255,0.10);
+      --text: #eef3ff;
+      --muted: #9ba8c4;
+      --muted2: #7f8ca8;
+      --blue: #7aa7ff;
+      --cyan: #73e0ff;
+      --green: #4ade80;
+      --red: #fb7185;
+      --yellow: #fbbf24;
+      --shadow: 0 18px 50px rgba(0,0,0,0.28);
+      --radius: 24px;
     }
 
     * {
       box-sizing: border-box;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
     body {
       margin: 0;
       min-height: 100vh;
-      background:
-        radial-gradient(circle at 12% 0%, rgba(134,167,255,.18), transparent 32rem),
-        radial-gradient(circle at 88% 12%, rgba(192,132,252,.12), transparent 30rem),
-        linear-gradient(180deg, #131722 0%, var(--bg) 100%);
       color: var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 12% 4%, rgba(90, 113, 255, 0.24), transparent 30%),
+        radial-gradient(circle at 82% 0%, rgba(255, 132, 66, 0.20), transparent 24%),
+        radial-gradient(circle at 70% 46%, rgba(42, 211, 255, 0.08), transparent 30%),
+        linear-gradient(180deg, #080d1b 0%, #0c1222 100%);
     }
 
     a {
-      color: inherit;
+      color: var(--cyan);
       text-decoration: none;
     }
 
+    code {
+      font-family: Consolas, Monaco, "Cascadia Mono", monospace;
+    }
+
     .wrap {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1500px, calc(100vw - 32px));
       margin: 0 auto;
-      padding: 34px 0 54px;
+      padding: 24px 0 42px;
     }
 
     .hero {
-      display: grid;
-      grid-template-columns: 1.4fr .9fr;
-      gap: 18px;
-      align-items: stretch;
-      margin-bottom: 22px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(31, 40, 69, 0.92), rgba(12, 17, 33, 0.92));
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: 26px 28px;
+      overflow: hidden;
+      position: relative;
     }
 
-    .hero-main,
-    .hero-side,
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -90px;
+      top: -110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(115, 224, 255, 0.18), transparent 68%);
+      pointer-events: none;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(28px, 4.2vw, 46px);
+      letter-spacing: 0.4px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 10px 0 0;
+      font-size: 15px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #d6def3;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .section {
+      margin-top: 22px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 0 0 14px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .section-title .desc {
+      color: var(--muted2);
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: right;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .server-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
     .card {
+      border: 1px solid var(--border);
       background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 24px;
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
       backdrop-filter: blur(14px);
     }
 
-    .hero-main {
-      padding: 30px;
-      position: relative;
-      overflow: hidden;
+    .summary-card {
+      min-height: 158px;
+      padding: 22px;
     }
 
-    .hero-main::after {
-      content: "";
-      position: absolute;
-      right: -90px;
-      top: -120px;
-      width: 280px;
-      height: 280px;
-      background: radial-gradient(circle, rgba(134,167,255,.22), transparent 68%);
-      pointer-events: none;
-    }
-
-    .kicker {
-      display: inline-flex;
+    .summary-head {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      padding: 7px 11px;
-      border-radius: 999px;
-      background: rgba(134,167,255,.12);
-      border: 1px solid rgba(134,167,255,.22);
-      color: #dbe4ff;
-      font-size: 13px;
-      font-weight: 700;
+      gap: 12px;
       margin-bottom: 18px;
     }
 
-    h1 {
-      margin: 0;
-      font-size: clamp(2.25rem, 6vw, 4.5rem);
-      line-height: 1.04;
-      letter-spacing: -0.06em;
-    }
-
-    .lead {
-      margin: 18px 0 0;
-      color: var(--muted);
-      font-size: 1.04rem;
-      line-height: 1.9;
-      max-width: 760px;
-    }
-
-    .hero-side {
-      padding: 22px;
+    .summary-title {
+      font-size: 19px;
+      font-weight: 800;
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .metric {
-      background: var(--card2);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 14px;
-    }
-
-    .metric .num {
-      font-size: 1.7rem;
-      font-weight: 850;
-      letter-spacing: -0.04em;
-    }
-
-    .metric .label {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 18px 0 26px;
-    }
-
-    .btn,
-    button.btn {
-      appearance: none;
-      border: 1px solid var(--line);
-      background: var(--card2);
-      color: var(--text);
-      border-radius: 13px;
-      padding: 10px 13px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 7px;
-      transition: .14s ease;
-      white-space: nowrap;
-    }
-
-    .btn:hover,
-    button.btn:hover {
-      transform: translateY(-1px);
-      border-color: rgba(134,167,255,.55);
-      filter: brightness(1.05);
-    }
-
-    .btn.primary {
-      background: linear-gradient(135deg, #86a7ff, #c084fc);
-      color: #080b12;
-      border-color: transparent;
-    }
-
-    .btn.green {
-      background: rgba(105,219,124,.14);
-      border-color: rgba(105,219,124,.26);
-      color: #d3f9d8;
-    }
-
-    .btn.warn {
-      background: rgba(255,212,59,.12);
-      border-color: rgba(255,212,59,.22);
-      color: #fff3bf;
-    }
-
-    .btn.disabled {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    .section {
-      margin-top: 28px;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 0 0 13px;
-    }
-
-    .section-title {
-      margin: 0;
-      font-size: 1.15rem;
-      letter-spacing: .02em;
-    }
-
-    .section-desc {
-      color: var(--muted2);
-      font-size: 14px;
-    }
-
-    .grid {
-      display: grid;
-      gap: 14px;
-    }
-
-    .grid.services {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .grid.vps {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .grid.two {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .card {
-      padding: 18px;
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .card h2,
-    .card h3 {
-      margin: 0;
-      font-size: 1.12rem;
-      line-height: 1.35;
+      gap: 9px;
     }
 
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+      padding: 8px 12px;
       border-radius: 999px;
-      padding: 5px 9px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .badge.live {
+      color: #cfe0ff;
+      background: rgba(122,167,255,0.13);
+      border-color: rgba(122,167,255,0.32);
+    }
+
+    .badge.ok {
+      color: #bbf7d0;
+      background: rgba(74,222,128,0.13);
+      border-color: rgba(74,222,128,0.30);
+    }
+
+    .badge.warn {
+      color: #fde68a;
+      background: rgba(251,191,36,0.12);
+      border-color: rgba(251,191,36,0.28);
+    }
+
+    .big-num {
+      font-size: 52px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-top: 8px;
+    }
+
+    .small-text {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .service-card {
+      display: block;
+      padding: 16px 15px;
+      min-height: 118px;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(115,224,255,0.30);
+      background: rgba(32, 43, 72, 0.88);
+    }
+
+    .service-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .service-name {
+      font-weight: 850;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .service-url {
       color: var(--muted);
       font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .badge.online {
-      color: #d3f9d8;
-      border-color: rgba(105,219,124,.24);
-      background: rgba(105,219,124,.12);
-    }
-
-    .badge.todo {
-      color: #fff3bf;
-      border-color: rgba(255,212,59,.24);
-      background: rgba(255,212,59,.11);
-    }
-
-    .badge.cf {
-      color: #dbe4ff;
-      border-color: rgba(134,167,255,.24);
-      background: rgba(134,167,255,.11);
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 99px;
-      background: var(--green);
-      box-shadow: 0 0 12px rgba(105,219,124,.65);
-    }
-
-    .meta {
-      color: var(--muted);
-      line-height: 1.75;
-      font-size: 14px;
-      margin: 12px 0 14px;
-    }
-
-    code,
-    .cmd {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    }
-
-    code {
-      background: rgba(0,0,0,.25);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 2px 6px;
-      color: #e9ecef;
+      line-height: 1.45;
       word-break: break-all;
     }
 
-    .cmdbox {
-      background: rgba(0,0,0,.26);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 12px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-      margin: 10px 0 12px;
+    .server-card {
+      padding: 20px;
+      min-height: 430px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .cmd {
-      color: #dbe4ff;
+    .server-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .server-name {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .server-flag {
+      font-size: 19px;
+      font-weight: 800;
+      opacity: 0.95;
+    }
+
+    .server-title {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 900;
+      white-space: nowrap;
+      color: #bbf7d0;
+      background: rgba(74,222,128,0.14);
+      border: 1px solid rgba(74,222,128,0.34);
+    }
+
+    .status.offline {
+      color: #fecdd3;
+      background: rgba(251,113,133,0.13);
+      border-color: rgba(251,113,133,0.34);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(74,222,128,0.8);
+    }
+
+    .offline .dot {
+      background: var(--red);
+      box-shadow: 0 0 12px rgba(251,113,133,0.7);
+    }
+
+    .line {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #e9eefc;
       font-size: 13px;
       white-space: nowrap;
-      overflow: auto;
-      padding-bottom: 2px;
     }
 
-    .actions {
-      display: flex;
-      gap: 9px;
-      flex-wrap: wrap;
-      margin-top: 12px;
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      margin-bottom: 16px;
     }
 
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-      overflow: hidden;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: var(--card);
+    .metric {
+      border-radius: 15px;
+      padding: 11px 12px;
+      background: rgba(255,255,255,0.040);
+      border: 1px solid rgba(255,255,255,0.07);
+      min-width: 0;
     }
 
-    .table th,
-    .table td {
-      padding: 13px 14px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      vertical-align: top;
-      font-size: 14px;
-    }
-
-    .table th {
-      color: var(--muted);
-      font-weight: 800;
-      background: rgba(255,255,255,.035);
-    }
-
-    .table tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .toast {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      background: #202637;
-      color: var(--text);
-      border: 1px solid rgba(134,167,255,.28);
-      box-shadow: var(--shadow);
-      border-radius: 16px;
-      padding: 12px 14px;
-      opacity: 0;
-      transform: translateY(10px);
-      pointer-events: none;
-      transition: .18s ease;
-      z-index: 99;
-      max-width: min(460px, calc(100% - 36px));
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .mini {
-      font-size: 12px;
+    .metric-label {
       color: var(--muted2);
+      font-size: 12px;
+      margin-bottom: 6px;
     }
 
-    .callout {
-      border: 1px solid rgba(134,167,255,.22);
-      background: rgba(134,167,255,.08);
-      border-radius: 20px;
-      padding: 16px;
-      color: var(--muted);
-      line-height: 1.75;
-    }
-
-    .callout strong {
+    .metric-value {
       color: var(--text);
+      font-weight: 800;
+      font-size: 15px;
+      word-break: break-word;
     }
 
-    @media (max-width: 980px) {
-      .hero,
-      .grid.services,
-      .grid.vps,
-      .grid.two {
+    .metric-wide {
+      grid-column: 1 / -1;
+    }
+
+    .ssh-box {
+      margin-top: auto;
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(5, 8, 18, 0.42);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .ssh-title {
+      color: #dce6ff;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .ssh-row {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .ssh-input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 11px 12px;
+      color: #f9fbff;
+      background: rgba(0,0,0,0.26);
+      font-family: Consolas, Monaco, "Cascadia Mono", monospace;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow-x: auto;
+      outline: none;
+    }
+
+    .copy-btn {
+      border: 0;
+      border-radius: 14px;
+      min-width: 104px;
+      padding: 0 15px;
+      cursor: pointer;
+      color: white;
+      font-weight: 900;
+      font-size: 14px;
+      background: linear-gradient(135deg, #355ea9, #567bd5);
+      transition: transform .15s ease, opacity .15s ease, background .15s ease;
+    }
+
+    .copy-btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
+    }
+
+    .copy-btn.copied {
+      background: linear-gradient(135deg, #238a52, #35b86d);
+    }
+
+    .error {
+      display: none;
+      margin-top: 18px;
+      border-radius: 18px;
+      padding: 15px 16px;
+      background: rgba(251,113,133,0.10);
+      border: 1px solid rgba(251,113,133,0.24);
+      color: #fecdd3;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .loading {
+      grid-column: 1 / -1;
+      color: var(--muted);
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .footer {
+      margin-top: 26px;
+      text-align: center;
+      color: var(--muted2);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 1250px) {
+      .server-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .service-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid,
+      .server-grid {
         grid-template-columns: 1fr;
       }
 
-      .summary {
+      .service-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .section-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .section-title .desc {
+        text-align: left;
       }
     }
 
     @media (max-width: 560px) {
       .wrap {
-        width: min(100% - 22px, 1180px);
-        padding-top: 18px;
+        width: min(100vw - 18px, 100%);
+        padding-top: 14px;
       }
 
-      .hero-main,
-      .hero-side,
-      .card {
-        border-radius: 18px;
+      .hero {
+        padding: 22px 17px;
+        border-radius: 23px;
       }
 
-      .hero-main {
-        padding: 22px;
-      }
-
-      .summary {
+      .service-grid {
         grid-template-columns: 1fr;
       }
 
-      .cmdbox {
+      .metrics {
         grid-template-columns: 1fr;
       }
 
-      .table {
-        display: block;
-        overflow-x: auto;
+      .ssh-row {
+        flex-direction: column;
+      }
+
+      .copy-btn {
+        min-height: 44px;
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
+  <main class="wrap">
     <section class="hero">
-      <div class="hero-main">
-        <div class="kicker">☁️ xushuo cloud console</div>
-        <h1>xushuo 云服务总控台</h1>
-        <p class="lead">
-          这里统一记录 VPS、Cloudflare、OpenList、R2、Hugo 博客、Telegram Bot、哪吒面板和常用登录命令。
-          这个页面不直接保存私钥，不做 WebSSH；需要登录时复制命令到 Windows PowerShell 执行。
-        </p>
-      </div>
-
-      <aside class="hero-side">
-        <div class="summary">
-          <div class="metric">
-            <div class="num">6/6</div>
-            <div class="label">VPS 在线记录</div>
-          </div>
-          <div class="metric">
-            <div class="num">5+</div>
-            <div class="label">Cloudflare 服务</div>
-          </div>
-          <div class="metric">
-            <div class="num">R2</div>
-            <div class="label">小文件存储</div>
-          </div>
-          <div class="metric">
-            <div class="num">Bot</div>
-            <div class="label">Telegram 运维入口</div>
-          </div>
-        </div>
-        <div class="mini">当前页面为静态面板。实时数据以后可从哪吒 / Telegram Bot JSON 接入。</div>
-      </aside>
-    </section>
-
-    <nav class="nav">
-      <a class="btn primary" href="#services">服务入口</a>
-      <a class="btn" href="#vps">VPS 登录</a>
-      <a class="btn" href="#bot">Telegram Bot</a>
-      <a class="btn" href="#cloudflare">Cloudflare 架构</a>
-      <a class="btn" href="#commands">维护命令</a>
-    </nav>
-
-    
-    <section id="live-status" class="section">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">实时状态</h2>
-          <div class="section-desc">
-            数据来自 HK39 每分钟推送到 R2 的 JSON。上次更新：<span id="live-updated">加载中</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid services" id="live-summary-grid">
-        <article class="card">
-          <div class="card-top">
-            <h3>📡 VPS 在线</h3>
-            <span class="badge cf">Live</span>
-          </div>
-          <div class="metric">
-            <div class="num" id="live-online">--/--</div>
-            <div class="label">在线 / 总数</div>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-top">
-            <h3>🔄 自动刷新</h3>
-            <span class="badge cf">30s</span>
-          </div>
-          <div class="meta">
-            页面每 30 秒读取一次 R2 JSON，HK39 每分钟上传一次。
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-top">
-            <h3>🧭 数据源</h3>
-            <span class="badge cf">R2 JSON</span>
-          </div>
-          <div class="meta">
-            <code>dl.xushuo.uk/status/vps-status.json</code>
-          </div>
-        </article>
-      </div>
-
-      <div class="grid vps" id="live-server-grid" style="margin-top:14px">
-        <article class="card">
-          <div class="meta">正在加载实时 VPS 状态……</div>
-        </article>
+      <h1>xushuo 云服务总控台</h1>
+      <p>统一查看 VPS 实时状态、端口状态、机器用途、流量、资源占用和 SSH 登录命令。</p>
+      <p id="updatedText">数据来自 HK39 每分钟推送到 R2 的 JSON。上次更新：加载中</p>
+      <div class="pill-row">
+        <span class="pill">📡 HK39 → R2 JSON</span>
+        <span class="pill">🔄 页面 30 秒自动刷新</span>
+        <span class="pill">🧩 状态与登录合并显示</span>
+        <span class="pill">📋 SSH 一键复制</span>
       </div>
     </section>
 
-    <section id="services" class="section">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">服务入口</h2>
-          <div class="section-desc">xushuo.uk 作为主域名，gaojiefeng.uk 作为旧域名/正式身份域名保留。</div>
-        </div>
-      </div>
+    <section class="section">
+      <div class="summary-grid">
+        <article class="card summary-card">
+          <div class="summary-head">
+            <div class="summary-title">🛰️ VPS 在线</div>
+            <span class="badge live">Live</span>
+          </div>
+          <div class="big-num" id="onlineCount">--/--</div>
+          <div class="small-text">在线 / 总数</div>
+        </article>
 
-      <div class="grid services">
-        <article class="card">
-          <div class="card-top">
-            <h3>📝 Hugo 博客</h3>
-            <span class="badge online"><span class="dot"></span>已上线</span>
+        <article class="card summary-card">
+          <div class="summary-head">
+            <div class="summary-title">🔄 自动刷新</div>
+            <span class="badge ok">30s</span>
           </div>
-          <div class="meta">
-            域名：<code>blog.xushuo.uk</code><br>
-            平台：Cloudflare Pages<br>
-            源码：GitHub <code>blog-gaojiefeng</code>
-          </div>
-          <div class="actions">
-            <a class="btn primary" href="https://blog.xushuo.uk" target="_blank">打开博客</a>
-            <button class="btn" onclick="copyText('https://blog.xushuo.uk')">复制链接</button>
+          <div class="small-text">
+            页面每 30 秒读取一次 R2 JSON。<br>
+            HK39 每分钟上传一次状态文件。
           </div>
         </article>
 
-        <article class="card">
-          <div class="card-top">
-            <h3>📦 OpenList 网盘</h3>
-            <span class="badge online"><span class="dot"></span>已上线</span>
+        <article class="card summary-card">
+          <div class="summary-head">
+            <div class="summary-title">🧭 数据源</div>
+            <span class="badge live">R2 JSON</span>
           </div>
-          <div class="meta">
-            域名：<code>pan.xushuo.uk</code><br>
-            后端：Azure SG <code>127.0.0.1:5244</code><br>
-            入口：Cloudflare Tunnel <code>azure-sg-pan</code>
-          </div>
-          <div class="actions">
-            <a class="btn primary" href="https://pan.xushuo.uk" target="_blank">打开网盘</a>
-            <button class="btn" onclick="copyText('https://pan.xushuo.uk')">复制链接</button>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-top">
-            <h3>⬇️ R2 下载站</h3>
-            <span class="badge online"><span class="dot"></span>已上线</span>
-          </div>
-          <div class="meta">
-            域名：<code>dl.xushuo.uk</code><br>
-            存储：R2 Bucket <code>gaojiefeng-dl</code><br>
-            用途：公开小文件直链下载
-          </div>
-          <div class="actions">
-            <a class="btn primary" href="https://dl.xushuo.uk" target="_blank">打开下载站</a>
-            <button class="btn" onclick="copyText('https://dl.xushuo.uk')">复制链接</button>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-top">
-            <h3>📁 小文件网页</h3>
-            <span class="badge online"><span class="dot"></span>已上线</span>
-          </div>
-          <div class="meta">
-            域名：<code>files.xushuo.uk</code><br>
-            平台：Cloudflare Worker + R2<br>
-            用途：网页登录、上传、删除、复制链接
-          </div>
-          <div class="actions">
-            <a class="btn primary" href="https://files.xushuo.uk" target="_blank">打开小文件网盘</a>
-            <button class="btn" onclick="copyText('https://files.xushuo.uk')">复制链接</button>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-top">
-            <h3>🖥️ VPS 面板</h3>
-            <span class="badge todo">规划中</span>
-          </div>
-          <div class="meta">
-            域名：<code>vps.xushuo.uk</code><br>
-            平台：Cloudflare Pages<br>
-            用途：当前这个总控台，记录机器、服务和登录命令
-          </div>
-          <div class="actions">
-            <button class="btn primary" onclick="copyText('https://vps.xushuo.uk')">复制入口</button>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-top">
-            <h3>📊 哪吒面板</h3>
-            <span class="badge todo">待接入</span>
-          </div>
-          <div class="meta">
-            目标域名：<code>status.xushuo.uk</code><br>
-            当前入口：<code>http://103.122.247.99:8008</code><br>
-            用途：VPS 在线、CPU、内存、流量、告警
-          </div>
-          <div class="actions">
-            <a class="btn primary" href="http://103.122.247.99:8008" target="_blank">打开当前面板</a>
-            <button class="btn" onclick="copyText('http://103.122.247.99:8008')">复制当前入口</button>
+          <div class="small-text">
+            <a href="https://dl.xushuo.uk/status/vps-status.json" target="_blank">
+              dl.xushuo.uk/status/vps-status.json
+            </a>
           </div>
         </article>
       </div>
     </section>
 
-    <section id="vps" class="section">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">VPS 登录与用途</h2>
-          <div class="section-desc">点击复制 SSH 命令，然后粘贴到 Windows PowerShell 执行。</div>
-        </div>
+    <section class="section">
+      <div class="section-title">
+        <h2>快捷入口</h2>
+        <div class="desc">Pages / R2 / Worker / Tunnel / 哪吒 / VPS 控制台</div>
       </div>
 
-      <div class="grid vps">
-        <article class="card">
-          <div class="card-top">
-            <h3>🇭🇰 HK39</h3>
-            <span class="badge online"><span class="dot"></span>在线</span>
-          </div>
-          <div class="meta">
-            IP：<code>103.122.247.99</code><br>
-            端口：<code>8008</code><br>
-            用途：Telegram Bot / 哪吒 / 监控 / 行情提醒
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">ssh -i "D:\Download\xushuo_key.pem" root@103.122.247.99</div>
-            <button class="btn" onclick="copyText('ssh -i &quot;D:\\Download\\xushuo_key.pem&quot; root@103.122.247.99')">复制</button>
-          </div>
-          <div class="actions">
-            <a class="btn" href="http://103.122.247.99:8008" target="_blank">哪吒</a>
-            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 bot.log')">复制 Bot 日志命令</button>
-          </div>
-        </article>
+      <div class="service-grid">
+        <a class="card service-card" href="https://blog.xushuo.uk" target="_blank">
+          <div class="service-icon">📝</div>
+          <div class="service-name">博客</div>
+          <div class="service-url">blog.xushuo.uk</div>
+        </a>
 
-        <article class="card">
-          <div class="card-top">
-            <h3>🇰🇷 Azure KR</h3>
-            <span class="badge online"><span class="dot"></span>在线</span>
-          </div>
-          <div class="meta">
-            IP：<code>20.196.247.193</code><br>
-            端口：<code>443</code><br>
-            用途：Reality 节点 <code>azure-kr-reality-cf</code>
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">ssh -i "D:\Download\xushuo_key.pem" azureuser@20.196.247.193</div>
-            <button class="btn" onclick="copyText('ssh -i &quot;D:\\Download\\xushuo_key.pem&quot; azureuser@20.196.247.193')">复制</button>
-          </div>
-          <div class="actions">
-            <button class="btn" onclick="copyText('sudo -i')">复制 sudo</button>
-          </div>
-        </article>
+        <a class="card service-card" href="https://pan.xushuo.uk" target="_blank">
+          <div class="service-icon">🗂️</div>
+          <div class="service-name">OpenList 网盘</div>
+          <div class="service-url">pan.xushuo.uk</div>
+        </a>
 
-        <article class="card">
-          <div class="card-top">
-            <h3>🇸🇬 Azure SG</h3>
-            <span class="badge online"><span class="dot"></span>在线</span>
-          </div>
-          <div class="meta">
-            IP：<code>20.212.17.214</code><br>
-            端口：<code>443</code> / <code>5244</code><br>
-            用途：OpenList / cloudflared / Reality
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">ssh -i "D:\Download\xushuo_key.pem" azureuser@20.212.17.214</div>
-            <button class="btn" onclick="copyText('ssh -i &quot;D:\\Download\\xushuo_key.pem&quot; azureuser@20.212.17.214')">复制</button>
-          </div>
-          <div class="actions">
-            <a class="btn" href="https://pan.xushuo.uk" target="_blank">OpenList</a>
-            <button class="btn" onclick="copyText('systemctl status cloudflared --no-pager -l')">复制 Tunnel 状态</button>
-          </div>
-        </article>
+        <a class="card service-card" href="https://dl.xushuo.uk" target="_blank">
+          <div class="service-icon">📦</div>
+          <div class="service-name">R2 下载站</div>
+          <div class="service-url">dl.xushuo.uk</div>
+        </a>
 
-        <article class="card">
-          <div class="card-top">
-            <h3>🇯🇵 JP NAT</h3>
-            <span class="badge online"><span class="dot"></span>在线</span>
-          </div>
-          <div class="meta">
-            IP：<code>154.36.187.99</code><br>
-            端口：<code>51046</code><br>
-            备注：按当前 Bot 记录暂写为 NAT 登录端口
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">ssh root@154.36.187.99 -p 51046</div>
-            <button class="btn" onclick="copyText('ssh root@154.36.187.99 -p 51046')">复制</button>
-          </div>
-        </article>
+        <a class="card service-card" href="https://files.xushuo.uk" target="_blank">
+          <div class="service-icon">📁</div>
+          <div class="service-name">文件管理</div>
+          <div class="service-url">files.xushuo.uk</div>
+        </a>
 
-        <article class="card">
-          <div class="card-top">
-            <h3>🇩🇪 DE Long</h3>
-            <span class="badge online"><span class="dot"></span>在线</span>
-          </div>
-          <div class="meta">
-            IP：<code>89.144.8.91</code><br>
-            端口：<code>50426</code><br>
-            备注：长期德国 NAT / 按当前 Bot 记录
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">ssh root@89.144.8.91 -p 50426</div>
-            <button class="btn" onclick="copyText('ssh root@89.144.8.91 -p 50426')">复制</button>
-          </div>
-        </article>
+        <a class="card service-card" href="http://103.122.247.99:8008" target="_blank">
+          <div class="service-icon">📊</div>
+          <div class="service-name">哪吒面板</div>
+          <div class="service-url">103.122.247.99:8008</div>
+        </a>
 
-        <article class="card">
-          <div class="card-top">
-            <h3>🇩🇪 DE Short</h3>
-            <span class="badge online"><span class="dot"></span>在线</span>
-          </div>
-          <div class="meta">
-            IP：<code>89.106.78.178</code><br>
-            端口：<code>34244</code><br>
-            备注：短期德国 NAT / 按当前 Bot 记录
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">ssh root@89.106.78.178 -p 34244</div>
-            <button class="btn" onclick="copyText('ssh root@89.106.78.178 -p 34244')">复制</button>
-          </div>
-        </article>
+        <a class="card service-card" href="https://vps.xushuo.uk" target="_blank">
+          <div class="service-icon">🖥️</div>
+          <div class="service-name">VPS 控制台</div>
+          <div class="service-url">vps.xushuo.uk</div>
+        </a>
       </div>
     </section>
 
-    <section id="bot" class="section">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Telegram Bot 与 HK39 运维</h2>
-          <div class="section-desc">Bot 运行在 HK39，负责 /vps、行情提醒、网盘入口、服务状态等。</div>
-        </div>
+    <section class="section">
+      <div class="section-title">
+        <h2>VPS 实时状态与登录</h2>
+        <div class="desc">状态、用途、端口、资源、流量、SSH 登录命令集中在这里</div>
       </div>
 
-      <div class="grid two">
-        <article class="card">
-          <div class="card-top">
-            <h3>🤖 Telegram Bot</h3>
-            <span class="badge cf">HK39</span>
-          </div>
-          <div class="meta">
-            路径：<code>/root/tg-node-bot</code><br>
-            主程序：<code>bot.py</code><br>
-            日志：<code>bot.log</code>
-          </div>
-          <div class="actions">
-            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 bot.log')">复制查看日志</button>
-            <button class="btn" onclick="copyText('cd /root/tg-node-bot && pkill -f bot.py; nohup python3 bot.py > bot.log 2>&1 &')">复制重启 Bot</button>
-            <button class="btn" onclick="copyText('/vps')">复制 /vps</button>
-            <button class="btn" onclick="copyText('/pan')">复制 /pan</button>
-          </div>
-        </article>
+      <div id="errorBox" class="error"></div>
 
-        <article class="card">
-          <div class="card-top">
-            <h3>📈 行情与提醒</h3>
-            <span class="badge cf">Bot 功能</span>
-          </div>
-          <div class="meta">
-            负责市场提醒、VPS 掉线/恢复通知、常用入口菜单。<br>
-            后续可以把 /vps 的数据输出成 JSON，让本页面显示实时状态。
-          </div>
-          <div class="actions">
-            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 market_alert.log')">复制行情日志命令</button>
-            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 oracle_a1_monitor.log')">复制 Oracle 日志命令</button>
-          </div>
-        </article>
+      <div id="serverGrid" class="server-grid">
+        <div class="loading">正在加载实时 VPS 状态……</div>
       </div>
     </section>
 
-    <section id="cloudflare" class="section">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Cloudflare 服务结构</h2>
-          <div class="section-desc">Pages / Tunnel / R2 / Worker 分工明确。</div>
-        </div>
-      </div>
-
-      <table class="table">
-        <thead>
-          <tr>
-            <th>域名</th>
-            <th>类型</th>
-            <th>后端 / 源码</th>
-            <th>用途</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>blog.xushuo.uk</code></td>
-            <td>Cloudflare Pages</td>
-            <td>GitHub <code>blog-gaojiefeng</code> / Hugo</td>
-            <td>博客、文档、折腾记录</td>
-          </tr>
-          <tr>
-            <td><code>pan.xushuo.uk</code></td>
-            <td>Cloudflare Tunnel</td>
-            <td>Azure SG <code>127.0.0.1:5244</code></td>
-            <td>OpenList 真网盘</td>
-          </tr>
-          <tr>
-            <td><code>dl.xushuo.uk</code></td>
-            <td>R2 Custom Domain</td>
-            <td>R2 Bucket <code>gaojiefeng-dl</code></td>
-            <td>公开下载直链</td>
-          </tr>
-          <tr>
-            <td><code>files.xushuo.uk</code></td>
-            <td>Worker + R2</td>
-            <td>Worker <code>gaojiefeng-files</code> / R2 Binding <code>BUCKET</code></td>
-            <td>网页登录上传、删除、复制链接</td>
-          </tr>
-          <tr>
-            <td><code>vps.xushuo.uk</code></td>
-            <td>Cloudflare Pages</td>
-            <td>GitHub <code>vps-dashboard</code></td>
-            <td>当前总控台 / 登录命令面板</td>
-          </tr>
-          <tr>
-            <td><code>status.xushuo.uk</code></td>
-            <td>计划：Tunnel / 反代</td>
-            <td>HK39 <code>103.122.247.99:8008</code></td>
-            <td>哪吒面板入口</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section id="commands" class="section">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">常用维护命令</h2>
-          <div class="section-desc">登录对应机器后执行。这里主要负责复制，不直接执行。</div>
-        </div>
-      </div>
-
-      <div class="grid two">
-        <article class="card">
-          <div class="card-top">
-            <h3>Azure SG：OpenList / Tunnel</h3>
-            <span class="badge cf">20.212.17.214</span>
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">curl -L http://127.0.0.1:5244 | head</div>
-            <button class="btn" onclick="copyText('curl -L http://127.0.0.1:5244 | head')">复制</button>
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">systemctl status cloudflared --no-pager -l</div>
-            <button class="btn" onclick="copyText('systemctl status cloudflared --no-pager -l')">复制</button>
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">journalctl -u cloudflared -n 80 --no-pager</div>
-            <button class="btn" onclick="copyText('journalctl -u cloudflared -n 80 --no-pager')">复制</button>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-top">
-            <h3>HK39：Bot / 哪吒</h3>
-            <span class="badge cf">103.122.247.99</span>
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">cd /root/tg-node-bot && tail -n 120 bot.log</div>
-            <button class="btn" onclick="copyText('cd /root/tg-node-bot && tail -n 120 bot.log')">复制</button>
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">cd /root/tg-node-bot && ps aux | grep '[b]ot.py'</div>
-            <button class="btn" onclick="copyText('cd /root/tg-node-bot && ps aux | grep \\'[b]ot.py\\'')">复制</button>
-          </div>
-          <div class="cmdbox">
-            <div class="cmd">ss -lntp | grep -E ':8008|:22'</div>
-            <button class="btn" onclick="copyText('ss -lntp | grep -E \\':8008|:22\\'')">复制</button>
-          </div>
-        </article>
-      </div>
-
-      <div class="callout" style="margin-top:14px">
-        <strong>说明：</strong>
-        JP NAT、DE Long、DE Short 当前页面按 Bot 输出端口生成 SSH 命令。如果这些端口只是“服务探测端口”而不是 SSH 端口，后续把卡片里的命令改成正确 SSH 端口即可。
-      </div>
-    </section>
-  </div>
-
-  <div id="toast" class="toast">已复制</div>
+    <div class="footer">
+      数据文件：<code>https://dl.xushuo.uk/status/vps-status.json</code><br>
+      如果某台机器的 SSH 登录命令需要调整，优先改 HK39 上的 <code>/root/vps-status/publish_status.py</code>，下次上传后页面会自动更新。
+    </div>
+  </main>
 
   <script>
-    async function copyText(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast("已复制：" + text);
-      } catch (e) {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-        showToast("已复制：" + text);
-      }
-    }
-
-    let toastTimer = null;
-
-    function showToast(msg) {
-      const el = document.getElementById("toast");
-      el.textContent = msg;
-      el.classList.add("show");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
-    }
-  </script>
-
-  <script>
-    async function loadLiveStatus() {
-      const grid = document.getElementById("live-server-grid");
-      const onlineEl = document.getElementById("live-online");
-      const updatedEl = document.getElementById("live-updated");
-
-      if (!grid || !onlineEl || !updatedEl) return;
-
-      try {
-        const res = await fetch("https://dl.xushuo.uk/status/vps-status.json?ts=" + Date.now(), {
-          cache: "no-store"
-        });
-
-        const data = await res.json();
-
-        if (!data.success) {
-          throw new Error(data.error || "status json success=false");
-        }
-
-        onlineEl.textContent = `${data.summary.online}/${data.summary.total}`;
-
-        const updated = new Date(data.updated_at);
-        updatedEl.textContent = updated.toLocaleString("zh-CN");
-
-        grid.innerHTML = "";
-
-        for (const s of data.servers) {
-          const card = document.createElement("article");
-          card.className = "card";
-
-          const ports = Array.isArray(s.ports) && s.ports.length
-            ? s.ports.map(p => {
-                const ok = s.port_status && s.port_status[p];
-                return `<code>${escapeHtml(p)}${ok ? "✅" : "❌"}</code>`;
-              }).join(" ")
-            : "-";
-
-          card.innerHTML = `
-            <div class="card-top">
-              <h3>${escapeHtml(s.flag || "🖥️")} ${escapeHtml(s.name || "Unknown")}</h3>
-              <span class="badge ${s.online ? "online" : "todo"}">${s.online ? '<span class="dot"></span>在线' : '离线'}</span>
-            </div>
-            <div class="meta">
-              IP：<code>${escapeHtml(s.ip || "-")}</code><br>
-              端口：${ports}<br>
-              用途：${escapeHtml(s.role || "-")}<br>
-              CPU：<code>${escapeHtml(s.cpu || "-")}</code><br>
-              内存：<code>${escapeHtml(s.memory || "-")}</code><br>
-              硬盘：<code>${escapeHtml(s.disk || "-")}</code><br>
-              流量：<code>${escapeHtml(s.traffic || "-")}</code><br>
-              运行：<code>${escapeHtml(s.uptime || "-")}</code>
-            </div>
-            ${s.ssh ? `
-              <div class="cmdbox">
-                <div class="cmd">${escapeHtml(s.ssh)}</div>
-                <button class="btn" onclick="copyText('${escapeForJs(s.ssh)}')">复制 SSH</button>
-              </div>
-            ` : ""}
-          `;
-
-          grid.appendChild(card);
-        }
-      } catch (e) {
-        grid.innerHTML = `
-          <article class="card">
-            <div class="card-top">
-              <h3>实时状态加载失败</h3>
-              <span class="badge todo">Error</span>
-            </div>
-            <div class="meta">
-              ${escapeHtml(e.message)}<br>
-              先打开 <code>https://dl.xushuo.uk/status/vps-status.json</code> 看 JSON 是否存在；如果 JSON 能打开，就是 R2 CORS 没配好。
-            </div>
-          </article>
-        `;
-        updatedEl.textContent = "加载失败";
-      }
-    }
+    const DATA_URL = "https://dl.xushuo.uk/status/vps-status.json";
+    const REFRESH_MS = 30000;
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -1059,17 +655,222 @@
         .replaceAll("'", "&#039;");
     }
 
-    function escapeForJs(value) {
-      return String(value ?? "")
-        .replaceAll("\\", "\\\\")
-        .replaceAll("'", "\\'")
-        .replaceAll("\n", "\\n")
-        .replaceAll("\r", "\\r");
+    function escapeAttr(value) {
+      return escapeHtml(value).replaceAll("`", "&#096;");
     }
 
-    loadLiveStatus();
-    setInterval(loadLiveStatus, 30000);
-  </script>
+    function formatDate(value) {
+      try {
+        return new Date(value).toLocaleString("zh-CN");
+      } catch (e) {
+        return String(value || "未知");
+      }
+    }
 
+    function getServers(data) {
+      if (Array.isArray(data?.servers)) return data.servers;
+      if (Array.isArray(data?.data?.servers)) return data.data.servers;
+      if (Array.isArray(data)) return data;
+      return [];
+    }
+
+    function getSummary(data, servers) {
+      const online = Number(data?.summary?.online ?? servers.filter(s => s.online).length);
+      const total = Number(data?.summary?.total ?? servers.length);
+      return { online, total };
+    }
+
+    function regionLabel(server) {
+      const name = String(server.name || "");
+      if (name.includes("HK")) return "HK";
+      if (name.includes("KR")) return "KR";
+      if (name.includes("SG")) return "SG";
+      if (name.includes("JP")) return "JP";
+      if (name.includes("DE")) return "DE";
+      return "VPS";
+    }
+
+    function renderPortTags(server) {
+      const ports = Array.isArray(server.ports) ? server.ports : [];
+      const status = server.port_status || {};
+
+      if (!ports.length) {
+        return '<span class="tag">端口：-</span>';
+      }
+
+      return ports.map(p => {
+        const key = String(p);
+        const ok = !!status[key];
+        return `<span class="tag">端口 ${escapeHtml(key)} ${ok ? "✅" : "❌"}</span>`;
+      }).join("");
+    }
+
+    function renderServers(servers) {
+      const grid = document.getElementById("serverGrid");
+
+      if (!servers.length) {
+        grid.innerHTML = '<div class="loading">没有读取到服务器数据。</div>';
+        return;
+      }
+
+      grid.innerHTML = servers.map(server => {
+        const name = server.name || server.raw_name || "Unknown";
+        const flag = server.flag || "🖥️";
+        const online = !!server.online;
+        const ssh = server.ssh || "";
+        const role = server.role || "-";
+
+        return `
+          <article class="card server-card">
+            <div class="server-top">
+              <div class="server-name">
+                <span class="server-flag">${escapeHtml(regionLabel(server))}</span>
+                <span class="server-title">${escapeHtml(flag)} ${escapeHtml(name)}</span>
+              </div>
+              <span class="status ${online ? "" : "offline"}">
+                <span class="dot"></span>
+                ${online ? "在线" : "离线"}
+              </span>
+            </div>
+
+            <div class="tag-row">
+              <span class="tag">IP：${escapeHtml(server.ip || "-")}</span>
+              ${renderPortTags(server)}
+            </div>
+
+            <div class="line">用途：${escapeHtml(role)}</div>
+
+            <div class="metrics">
+              <div class="metric">
+                <div class="metric-label">CPU</div>
+                <div class="metric-value">${escapeHtml(server.cpu || "-")}</div>
+              </div>
+
+              <div class="metric">
+                <div class="metric-label">运行</div>
+                <div class="metric-value">${escapeHtml(server.uptime || "-")}</div>
+              </div>
+
+              <div class="metric">
+                <div class="metric-label">内存</div>
+                <div class="metric-value">${escapeHtml(server.memory || "-")}</div>
+              </div>
+
+              <div class="metric">
+                <div class="metric-label">硬盘</div>
+                <div class="metric-value">${escapeHtml(server.disk || "-")}</div>
+              </div>
+
+              <div class="metric metric-wide">
+                <div class="metric-label">流量</div>
+                <div class="metric-value">${escapeHtml(server.traffic || "-")}</div>
+              </div>
+            </div>
+
+            <div class="ssh-box">
+              <div class="ssh-title">SSH 登录命令</div>
+              <div class="ssh-row">
+                <div class="ssh-input">${escapeHtml(ssh || "未配置 SSH 命令")}</div>
+                <button class="copy-btn" data-copy="${escapeAttr(ssh)}">复制 SSH</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      bindCopyButtons();
+    }
+
+    async function copyText(text, btn) {
+      const old = btn.textContent;
+
+      try {
+        if (!text) {
+          throw new Error("空命令");
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.setAttribute("readonly", "");
+          textarea.style.position = "fixed";
+          textarea.style.left = "-9999px";
+          textarea.style.top = "-9999px";
+          document.body.appendChild(textarea);
+          textarea.select();
+          textarea.setSelectionRange(0, textarea.value.length);
+          const ok = document.execCommand("copy");
+          document.body.removeChild(textarea);
+          if (!ok) throw new Error("execCommand failed");
+        }
+
+        btn.textContent = "已复制";
+        btn.classList.add("copied");
+
+        setTimeout(() => {
+          btn.textContent = old;
+          btn.classList.remove("copied");
+        }, 1300);
+      } catch (e) {
+        window.prompt("复制失败，请手动复制：", text);
+      }
+    }
+
+    function bindCopyButtons() {
+      document.querySelectorAll(".copy-btn").forEach(btn => {
+        btn.onclick = () => {
+          const text = btn.getAttribute("data-copy") || "";
+          copyText(text, btn);
+        };
+      });
+    }
+
+    function showError(message) {
+      const box = document.getElementById("errorBox");
+      box.style.display = "block";
+      box.textContent = message;
+    }
+
+    function hideError() {
+      const box = document.getElementById("errorBox");
+      box.style.display = "none";
+      box.textContent = "";
+    }
+
+    async function loadStatus() {
+      try {
+        const res = await fetch(DATA_URL + "?ts=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) {
+          throw new Error("HTTP " + res.status);
+        }
+
+        const data = await res.json();
+        if (data.success === false) {
+          throw new Error(data.error || "status json success=false");
+        }
+
+        const servers = getServers(data);
+        const summary = getSummary(data, servers);
+
+        document.getElementById("onlineCount").textContent = `${summary.online}/${summary.total}`;
+        document.getElementById("updatedText").textContent =
+          "数据来自 HK39 每分钟推送到 R2 的 JSON。上次更新：" + formatDate(data.updated_at);
+
+        renderServers(servers);
+        hideError();
+      } catch (e) {
+        showError(
+          "读取实时状态失败：" + e.message +
+          "\n\n先直接打开 https://dl.xushuo.uk/status/vps-status.json 看 JSON 是否正常。" +
+          "\n如果 JSON 正常但页面失败，大概率是 R2 CORS。"
+        );
+      }
+    }
+
+    loadStatus();
+    setInterval(loadStatus, REFRESH_MS);
+  </script>
 </body>
 </html>
