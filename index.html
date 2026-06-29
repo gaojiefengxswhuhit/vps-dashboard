@@ -158,7 +158,7 @@
     .arch-diagram {
       position: relative;
       min-width: 1160px;
-      min-height: 840px;
+      min-height: 1040px;
       border: 1px solid rgba(255,255,255,0.07);
       border-radius: 20px;
       background: rgba(4, 8, 18, 0.24);
@@ -231,11 +231,20 @@
 
     .arch-zone.hk39 {
       left: 332px;
-      top: 410px;
+      top: 650px;
       width: 382px;
       height: 318px;
       background: rgba(74, 222, 128, 0.065);
       border-color: rgba(74, 222, 128, 0.22);
+    }
+
+    .arch-zone.dashboard {
+      left: 332px;
+      top: 388px;
+      width: 382px;
+      height: 218px;
+      background: rgba(99, 102, 241, 0.075);
+      border-color: rgba(129, 140, 248, 0.26);
     }
 
     .arch-zone.telegram {
@@ -249,7 +258,7 @@
 
     .arch-zone.azure {
       left: 778px;
-      top: 410px;
+      top: 520px;
       width: 338px;
       height: 250px;
       background: rgba(34, 211, 238, 0.065);
@@ -258,7 +267,7 @@
 
     .arch-zone.vps {
       left: 24px;
-      top: 410px;
+      top: 520px;
       width: 260px;
       height: 340px;
       background: rgba(167, 139, 250, 0.075);
@@ -267,7 +276,7 @@
 
     .arch-zone.local {
       left: 778px;
-      top: 690px;
+      top: 875px;
       width: 338px;
       height: 128px;
       background: rgba(236, 72, 153, 0.065);
@@ -858,7 +867,7 @@
 
       <div class="card arch-map">
         <div class="arch-diagram" aria-label="xushuo 云服务架构流程图">
-          <svg class="arch-links" viewBox="0 0 1160 820" aria-hidden="true">
+          <svg class="arch-links" viewBox="0 0 1160 1040" aria-hidden="true">
             <defs>
               <marker id="flow-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(115, 224, 255, 0.72)"></path>
@@ -866,24 +875,26 @@
             </defs>
             <path d="M 248 104 C 268 104, 270 104, 288 104" marker-end="url(#flow-arrow)"></path>
             <text x="250" y="90">push / 自动构建</text>
-            <path d="M 572 360 C 565 386, 552 394, 548 410" marker-end="url(#flow-arrow)"></path>
-            <text x="565" y="386">读写 R2 状态</text>
-            <path d="M 284 536 C 304 536, 314 536, 332 536" marker-end="url(#flow-arrow)"></path>
-            <text x="116" y="382">哪吒 Agent 上报</text>
-            <path d="M 714 500 C 760 430, 826 260, 856 190" marker-end="url(#flow-arrow)"></path>
-            <text x="735" y="382">告警 / 查询数据</text>
-            <path d="M 778 515 C 748 515, 734 528, 714 536" marker-end="url(#flow-arrow)"></path>
-            <text x="722" y="510">Azure SG 也上报</text>
-            <path d="M 928 410 C 870 360, 792 310, 736 282" marker-end="url(#flow-arrow)"></path>
-            <text x="828" y="360">cloudflared 出站</text>
+            <path d="M 572 360 C 565 374, 552 382, 548 388" marker-end="url(#flow-arrow)"></path>
+            <text x="565" y="384">Pages / R2 JSON</text>
+            <path d="M 524 606 C 524 622, 524 634, 524 650" marker-end="url(#flow-arrow)"></path>
+            <text x="535" y="638">状态源来自 HK39</text>
+            <path d="M 284 666 C 304 666, 314 666, 332 666" marker-end="url(#flow-arrow)"></path>
+            <text x="116" y="492">哪吒 Agent 上报</text>
+            <path d="M 714 690 C 760 572, 826 284, 856 190" marker-end="url(#flow-arrow)"></path>
+            <text x="735" y="452">告警 / 查询数据</text>
+            <path d="M 778 646 C 748 650, 734 660, 714 676" marker-end="url(#flow-arrow)"></path>
+            <text x="722" y="640">Azure SG 也上报</text>
+            <path d="M 928 520 C 870 445, 792 326, 736 282" marker-end="url(#flow-arrow)"></path>
+            <text x="828" y="430">cloudflared 出站</text>
             <path d="M 818 162 C 838 162, 840 162, 856 162" marker-end="url(#flow-arrow)"></path>
             <text x="816" y="146">Bot 回调 / API</text>
-            <path d="M 818 260 C 870 320, 910 365, 938 410" marker-end="url(#flow-arrow)"></path>
-            <text x="868" y="326">pan.xushuo.uk</text>
-            <path d="M 952 686 C 770 760, 470 745, 284 620" marker-end="url(#flow-arrow)"></path>
-            <text x="606" y="790">本机 SSH 登录各 VPS</text>
-            <path d="M 520 728 C 522 760, 700 760, 778 740" marker-end="url(#flow-arrow)"></path>
-            <text x="548" y="778">总控台按钮</text>
+            <path d="M 818 260 C 870 350, 910 438, 938 520" marker-end="url(#flow-arrow)"></path>
+            <text x="868" y="378">pan.xushuo.uk</text>
+            <path d="M 952 875 C 770 988, 470 970, 284 742" marker-end="url(#flow-arrow)"></path>
+            <text x="606" y="1014">本机 SSH 登录各 VPS</text>
+            <path d="M 714 520 C 744 650, 764 790, 778 920" marker-end="url(#flow-arrow)"></path>
+            <text x="704" y="820">一键登录按钮</text>
           </svg>
 
           <div class="arch-zone github">
@@ -928,6 +939,29 @@
               <div class="arch-card">
                 <strong>DNS / HTTPS</strong>
                 <span>所有 xushuo.uk 子域名<br>证书与边缘入口</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-zone dashboard">
+            <h3>VPS 总控</h3>
+            <p>vps.xushuo.uk，所有状态、入口和运维按钮的聚合页面</p>
+            <div class="arch-card-grid">
+              <div class="arch-card compact">
+                <strong>状态卡片</strong>
+                <span>30 秒读取 R2 JSON<br>展示在线、端口、资源、流量</span>
+              </div>
+              <div class="arch-card compact">
+                <strong>快捷入口</strong>
+                <span>博客、网盘、R2 下载站<br>哪吒面板、文件管理</span>
+              </div>
+              <div class="arch-card compact">
+                <strong>SSH 操作</strong>
+                <span>复制命令<br>或唤起 vpsssh:// 一键登录</span>
+              </div>
+              <div class="arch-card compact">
+                <strong>架构视图</strong>
+                <span>把 CF、HK39、Bot、Azure、VPS 串起来</span>
               </div>
             </div>
           </div>
