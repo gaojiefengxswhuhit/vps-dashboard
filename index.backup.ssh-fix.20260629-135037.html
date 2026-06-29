@@ -645,12 +645,6 @@
   <script>
     const DATA_URL = "https://dl.xushuo.uk/status/vps-status.json";
     const REFRESH_MS = 30000;
-    const SSH_OVERRIDES = {
-      "JP NAT": 'ssh -i "D:\\Download\\xushuo_key.pem" root@154.36.187.99 -p 51046',
-      "DE Long": 'ssh -i "D:\\Download\\xushuo_key.pem" root@89.144.8.91 -p 50426',
-      "DE Short": 'ssh -i "D:\\Download\\xushuo_key.pem" root@89.106.78.178 -p 34244'
-    };
-
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -723,7 +717,7 @@
         const name = server.name || server.raw_name || "Unknown";
         const flag = server.flag || "🖥️";
         const online = !!server.online;
-        const ssh = SSH_OVERRIDES[name] || server.ssh || "";
+        const ssh = server.ssh || "";
         const role = server.role || "-";
 
         return `
