@@ -419,7 +419,14 @@
       outline: none;
     }
 
-    .copy-btn {
+    .ssh-actions {
+      display: flex;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .copy-btn,
+    .launch-btn {
       border: 0;
       border-radius: 14px;
       min-width: 104px;
@@ -432,9 +439,22 @@
       transition: transform .15s ease, opacity .15s ease, background .15s ease;
     }
 
-    .copy-btn:hover {
+    .copy-btn:hover,
+    .launch-btn:hover {
       transform: translateY(-1px);
       opacity: 0.96;
+    }
+
+    .launch-btn {
+      background: linear-gradient(135deg, #168a5c, #38b978);
+    }
+
+    .launch-btn:disabled {
+      cursor: not-allowed;
+      color: rgba(255,255,255,0.64);
+      background: rgba(255,255,255,0.12);
+      transform: none;
+      opacity: 1;
     }
 
     .copy-btn.copied {
@@ -521,7 +541,13 @@
         flex-direction: column;
       }
 
-      .copy-btn {
+      .ssh-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .copy-btn,
+      .launch-btn {
         min-height: 44px;
       }
     }
@@ -665,6 +691,71 @@
       return escapeHtml(value).replaceAll("`", "&#096;");
     }
 
+    function tokenizeCommand(command) {
+      const tokens = [];
+      const pattern = /"([^"]*)"|'([^']*)'|(\S+)/g;
+      let match;
+
+      while ((match = pattern.exec(command)) !== null) {
+        tokens.push(match[1] ?? match[2] ?? match[3]);
+      }
+
+      return tokens;
+    }
+
+    function parseSshCommand(command) {
+      const tokens = tokenizeCommand(command || "");
+      if (!tokens.length || tokens[0] !== "ssh") return null;
+
+      let key = "";
+      let port = "";
+      let userHost = "";
+
+      for (let i = 1; i < tokens.length; i++) {
+        const token = tokens[i];
+
+        if (token === "-i" && tokens[i + 1]) {
+          key = tokens[++i];
+          continue;
+        }
+
+        if (token === "-p" && tokens[i + 1]) {
+          port = tokens[++i];
+          continue;
+        }
+
+        if (!token.startsWith("-") && token.includes("@")) {
+          userHost = token;
+        }
+      }
+
+      const atIndex = userHost.indexOf("@");
+      if (!userHost || atIndex <= 0 || atIndex === userHost.length - 1) return null;
+
+      const user = userHost.slice(0, atIndex);
+      const host = userHost.slice(atIndex + 1);
+
+      if (!/^[A-Za-z0-9._-]+$/.test(user)) return null;
+      if (!/^[A-Za-z0-9._:-]+$/.test(host)) return null;
+      if (port && !/^\d{1,5}$/.test(port)) return null;
+
+      return { user, host, port, key };
+    }
+
+    function makeSshLaunchUrl(command, name) {
+      const parsed = parseSshCommand(command);
+      if (!parsed) return "";
+
+      const params = new URLSearchParams();
+      params.set("name", name || parsed.host);
+      params.set("user", parsed.user);
+      params.set("host", parsed.host);
+      if (parsed.port) params.set("port", parsed.port);
+      if (parsed.key) params.set("key", parsed.key);
+
+      return "vpsssh://connect?" + params.toString();
+    }
+
     function formatDate(value) {
       try {
         return new Date(value).toLocaleString("zh-CN");
@@ -724,6 +815,7 @@
         const flag = server.flag || "🖥️";
         const online = !!server.online;
         const ssh = SSH_OVERRIDES[name] || server.ssh || "";
+        const sshLaunchUrl = makeSshLaunchUrl(ssh, name);
         const role = server.role || "-";
 
         return `
@@ -777,7 +869,10 @@
               <div class="ssh-title">SSH 登录命令</div>
               <div class="ssh-row">
                 <div class="ssh-input">${escapeHtml(ssh || "未配置 SSH 命令")}</div>
-                <button class="copy-btn" data-copy="${escapeAttr(ssh)}">复制 SSH</button>
+                <div class="ssh-actions">
+                  <button class="launch-btn" data-launch="${escapeAttr(sshLaunchUrl)}" ${sshLaunchUrl ? "" : "disabled"}>一键登录</button>
+                  <button class="copy-btn" data-copy="${escapeAttr(ssh)}">复制 SSH</button>
+                </div>
               </div>
             </div>
           </article>
@@ -785,6 +880,7 @@
       }).join("");
 
       bindCopyButtons();
+      bindLaunchButtons();
     }
 
     async function copyText(text, btn) {
@@ -829,6 +925,20 @@
         btn.onclick = () => {
           const text = btn.getAttribute("data-copy") || "";
           copyText(text, btn);
+        };
+      });
+    }
+
+    function bindLaunchButtons() {
+      document.querySelectorAll(".launch-btn").forEach(btn => {
+        btn.onclick = () => {
+          const url = btn.getAttribute("data-launch") || "";
+          if (!url) {
+            alert("这台 VPS 的 SSH 命令格式暂不支持一键登录，请先使用复制。");
+            return;
+          }
+
+          window.location.href = url;
         };
       });
     }
