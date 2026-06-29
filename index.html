@@ -777,7 +777,7 @@
     <section class="section">
       <div class="section-title">
         <h2>云服务技术路线图</h2>
-        <div class="desc">域名入口、Cloudflare 边缘层、源站服务、状态上报和本机运维链路</div>
+        <div class="desc">域名入口、Cloudflare 边缘层、哪吒监控、Telegram Bot、状态上报和本机运维链路</div>
       </div>
 
       <div class="card route-map">
@@ -832,26 +832,76 @@
         </div>
 
         <div class="route-lane">
-          <div class="route-lane-title">VPS 监控状态</div>
+          <div class="route-lane-title">哪吒监控与状态页</div>
           <div class="route-flow">
             <div class="route-node origin">
-              <strong>各台 VPS</strong>
-              <span>HK / KR / SG / JP / DE<br>端口、资源、流量</span>
+              <strong>各 VPS Agent</strong>
+              <span>HK / KR / SG / JP / DE<br>资源、流量、端口状态</span>
             </div>
             <div class="route-arrow">→</div>
             <div class="route-node origin">
-              <strong>HK39 中枢</strong>
-              <span>哪吒面板<br>publish_status.py</span>
+              <strong>HK39 哪吒服务端</strong>
+              <span>集中接收监控数据<br>面板端口 8008</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node origin">
+              <strong>publish_status.py</strong>
+              <span>读取哪吒 API<br>生成 vps-status.json</span>
             </div>
             <div class="route-arrow">→</div>
             <div class="route-node cloudflare">
               <strong>Cloudflare R2</strong>
               <span>vps-status.json<br>dl.xushuo.uk/status</span>
             </div>
+          </div>
+        </div>
+
+        <div class="route-lane">
+          <div class="route-lane-title">状态展示与告警</div>
+          <div class="route-flow">
+            <div class="route-node cloudflare">
+              <strong>R2 状态 JSON</strong>
+              <span>HK39 每分钟上传<br>页面绕缓存拉取</span>
+            </div>
             <div class="route-arrow">→</div>
             <div class="route-node edge">
-              <strong>总控台拉取</strong>
-              <span>30 秒刷新<br>状态卡片实时展示</span>
+              <strong>VPS 总控台</strong>
+              <span>vps.xushuo.uk<br>30 秒自动刷新</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node origin">
+              <strong>HK39 Telegram Bot</strong>
+              <span>接入哪吒状态<br>异常/结果主动推送</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node">
+              <strong>Telegram 用户</strong>
+              <span>收到告警、查询结果<br>远程查看运行状态</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="route-lane">
+          <div class="route-lane-title">Telegram Bot 自动化</div>
+          <div class="route-flow">
+            <div class="route-node">
+              <strong>Telegram 指令/定时任务</strong>
+              <span>手动查询<br>行情检测定时运行</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node origin">
+              <strong>HK39 Bot 服务</strong>
+              <span>统一调度<br>状态、行情、AI 对话</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node edge">
+              <strong>外部 API</strong>
+              <span>行情数据源<br>DeepSeek AI 对话</span>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="route-node">
+              <strong>消息返回</strong>
+              <span>行情提醒、AI 回复<br>VPS/服务查询结果</span>
             </div>
           </div>
         </div>
