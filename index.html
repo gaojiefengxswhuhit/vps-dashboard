@@ -871,7 +871,7 @@
           <div class="flow-lane">
             <div class="flow-lane-head">
               <div class="flow-lane-title">Marzban 订阅控制</div>
-              <div class="flow-lane-desc">HK39 做控制面板，JP NAT 通过反向 SSH 隧道接入，用户订阅由 Marzban 统一开停。</div>
+              <div class="flow-lane-desc">HK39 做控制面板，JP NAT、DE Long、DE Short、Azure KR、Azure SG 都通过反向 SSH 隧道接入，用户订阅由 Marzban 统一开停。</div>
             </div>
             <div class="flow-row four">
               <div class="flow-node cloudflare">
@@ -881,17 +881,17 @@
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>访问<br>面板</span></div>
               <div class="flow-node marzban">
                 <strong>HK39 Marzban</strong>
-                <span>面板与订阅中心<br>用户：jp_nat_reality_cf<br>可禁用、限流、重置订阅</span>
+                <span>面板与订阅中心<br>用户：jp_nat_reality_cf<br>统一禁用、限流、重置订阅</span>
               </div>
               <div class="flow-arrow" aria-hidden="true">&harr;<span>反向<br>SSH</span></div>
               <div class="flow-node vps">
-                <strong>JP NAT Node</strong>
-                <span>Marzban Node 源码运行<br>管理端口经 HK39 反向转发<br>Xray 内部监听 34568</span>
+                <strong>全 VPS Nodes</strong>
+                <span>5 个 Marzban Node 源码运行<br>管理端口经 HK39 反向转发<br>JP / DE / Azure 分别接管本机 Xray</span>
               </div>
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>生成<br>订阅</span></div>
               <div class="flow-node dashboard">
                 <strong>用户订阅</strong>
-                <span>外网节点 154.36.187.99:51046<br>UUID 沿用原 JP YAML<br>停用户即可切断新订阅</span>
+                <span>6 个外网入口：JP、DE Long、DE Short、HK39、Azure KR、Azure SG<br>一个 UUID 管全部节点<br>停用户即可切断整组订阅</span>
               </div>
             </div>
           </div>
@@ -988,7 +988,7 @@
             </div>
           </div>
         </div>
-        <div class="flowchart-note">关系按六条链路拆开：部署与域名、状态监控、Marzban 订阅控制、服务发布、Telegram Bot、本机运维。Cloudflare 负责边缘入口和对象存储，HK39 是监控 / Bot / Marzban 的控制中枢，Azure SG 和各 NAT VPS 承载具体服务与节点。</div>
+        <div class="flowchart-note">关系按六条链路拆开：部署与域名、状态监控、Marzban 订阅控制、服务发布、Telegram Bot、本机运维。Cloudflare 负责边缘入口和对象存储，HK39 是监控 / Bot / Marzban 的控制中枢，HK39、Azure KR、Azure SG、JP NAT、DE Long、DE Short 都已纳入订阅控制。</div>
       </div>
     </section>
 
