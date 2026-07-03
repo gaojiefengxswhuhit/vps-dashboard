@@ -9,7 +9,7 @@ $StatusUrl = "https://dl.xushuo.uk/status/vps-status.json"
 $FallbackAllowedHosts = @(
   "103.122.247.99",
   "20.196.247.193",
-  "20.212.17.214",
+  "4.194.211.209",
   "154.36.187.99",
   "89.144.8.91",
   "89.106.78.178"
