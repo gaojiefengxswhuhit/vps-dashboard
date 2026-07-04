@@ -731,8 +731,8 @@
             <span class="badge live">R2 JSON</span>
           </div>
           <div class="small-text">
-            <a href="https://dl.xushuo.uk/status/vps-status.json" target="_blank">
-              dl.xushuo.uk/status/vps-status.json
+            <a href="https://files.xushuo.uk/status/vps-status.json" target="_blank">
+              files.xushuo.uk/status/vps-status.json
             </a>
           </div>
         </article>
@@ -750,12 +750,6 @@
           <div class="service-icon">📝</div>
           <div class="service-name">博客</div>
           <div class="service-url">blog.xushuo.uk</div>
-        </a>
-
-        <a class="card service-card" href="https://dl.xushuo.uk" target="_blank">
-          <div class="service-icon">📦</div>
-          <div class="service-name">R2 下载站</div>
-          <div class="service-url">dl.xushuo.uk</div>
         </a>
 
         <a class="card service-card" href="https://files.xushuo.uk" target="_blank">
@@ -852,7 +846,7 @@
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>每分钟<br>上传</span></div>
               <div class="flow-node cloudflare">
                 <strong>Cloudflare R2</strong>
-                <span>vps-status.json<br>dl.xushuo.uk/status<br>作为静态状态数据源</span>
+                <span>vps-status.json<br>files.xushuo.uk/status<br>作为静态状态数据源</span>
               </div>
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>30 秒<br>读取</span></div>
               <div class="flow-node dashboard">
@@ -920,7 +914,7 @@
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>公开访问</span></div>
               <div class="flow-node dashboard">
                 <strong>服务入口</strong>
-                <span>files.xushuo.uk：R2 文件管理 / 下载<br>marzban.xushuo.uk：订阅面板<br>dl.xushuo.uk：状态和下载</span>
+                <span>files.xushuo.uk：R2 文件管理 / 下载 / 状态 JSON<br>marzban.xushuo.uk：订阅面板</span>
               </div>
             </div>
           </div>
@@ -987,13 +981,13 @@
     </section>
 
     <div class="footer">
-      数据文件：<code>https://dl.xushuo.uk/status/vps-status.json</code><br>
+      数据文件：<code>https://files.xushuo.uk/status/vps-status.json</code><br>
       状态数据来自 HK39 的 <code>/root/vps-status/publish_status.py</code>；NAT 机器如果业务端口和 SSH 端口不同，在页面的 <code>SSH_OVERRIDES</code> 里修正。
     </div>
   </main>
 
   <script>
-    const DATA_URL = "https://dl.xushuo.uk/status/vps-status.json";
+    const DATA_URL = "https://files.xushuo.uk/status/vps-status.json";
     const REFRESH_MS = 30000;
     const SSH_OVERRIDES = {
       "JP NAT": 'ssh -i "D:\\Download\\xushuo_key.pem" root@154.36.187.99 -p 10475',
@@ -1303,7 +1297,7 @@
       } catch (e) {
         showError(
           "读取实时状态失败：" + e.message +
-          "\n\n先直接打开 https://dl.xushuo.uk/status/vps-status.json 看 JSON 是否正常。" +
+          "\n\n先直接打开 https://files.xushuo.uk/status/vps-status.json 看 JSON 是否正常。" +
           "\n如果 JSON 正常但页面失败，大概率是 R2 CORS。"
         );
       }

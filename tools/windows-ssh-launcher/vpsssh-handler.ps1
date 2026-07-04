@@ -5,7 +5,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$StatusUrl = "https://dl.xushuo.uk/status/vps-status.json"
+$StatusUrl = "https://files.xushuo.uk/status/vps-status.json"
 $FallbackAllowedHosts = @(
   "103.122.247.99",
   "20.196.247.193",
