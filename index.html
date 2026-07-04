@@ -506,6 +506,14 @@
       word-break: break-word;
     }
 
+    .metric-note {
+      margin-top: 4px;
+      color: var(--muted2);
+      font-size: 11px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
     .metric-wide {
       grid-column: 1 / -1;
     }
@@ -742,7 +750,7 @@
     <section class="section">
       <div class="section-title">
         <h2>快捷入口</h2>
-        <div class="desc">Pages / R2 / Worker / Tunnel / 哪吒 / Marzban / VPS 控制台</div>
+        <div class="desc">Cloudflare Pages / R2 / Worker / Tunnel / 哪吒 / Marzban / VPS 控制台</div>
       </div>
 
       <div class="service-grid">
@@ -825,23 +833,23 @@
           <div class="flow-lane">
             <div class="flow-lane-head">
               <div class="flow-lane-title">状态数据链路</div>
-              <div class="flow-lane-desc">所有 VPS 通过哪吒 Agent 上报到 HK39，HK39 每分钟整理并上传 R2，VPS 总控每 30 秒读取。</div>
+              <div class="flow-lane-desc">大部分 VPS 通过哪吒 Agent 上报到 HK39；Azure 节点的月内流量优先读取 Azure Monitor；HK39 每分钟整理并上传 R2，VPS 总控每 30 秒读取。</div>
             </div>
             <div class="flow-row four">
               <div class="flow-stack">
                 <div class="flow-node vps">
                   <strong>被监控节点</strong>
-                  <span>HK39 / Azure SG<br>JP NAT / DE Long<br>哪吒 Agent 上报资源、流量和端口</span>
+                  <span>HK39 / JP NAT / DE Long<br>GCP Iowa / Azure Linux 节点<br>哪吒 Agent 上报资源和在线状态</span>
                 </div>
                 <div class="flow-node azure">
                   <strong>服务承载节点</strong>
-                  <span>Azure SG：Reality 节点<br>Azure HK / HDU KR / Japan Auto：订阅节点</span>
+                  <span>Azure SG / Azure HK / Azure JP / HDU Azure<br>流量来自 Azure Monitor<br>US Dallas / Japan Auto 以端口探测补充</span>
                 </div>
               </div>
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>Agent<br>上报</span></div>
               <div class="flow-node hk39">
                 <strong>HK39</strong>
-                <span>哪吒服务端 8008<br>publish_status.py 读取 API<br>同时承载 Bot / Marzban / 自动化任务</span>
+                <span>哪吒服务端：103.122.247.99:8008<br>publish_status.py 读取哪吒 API + Azure Monitor<br>同时承载 Bot / Marzban / 自动化任务</span>
               </div>
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>每分钟<br>上传</span></div>
               <div class="flow-node cloudflare">
@@ -908,7 +916,7 @@
                 </div>
                 <div class="flow-node azure">
                   <strong>Tunnel 后端</strong>
-                  <span>HK39：marzban.xushuo.uk / 控制面板<br>Cloudflare Tunnel 主动出站<br>Azure SG：直连 Reality 节点</span>
+                  <span>HK39：marzban.xushuo.uk / 哪吒 / Bot<br>Cloudflare Tunnel 主动出站<br>Azure / GCP / NAT 机器主要承载代理节点</span>
                 </div>
               </div>
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>公开访问</span></div>
@@ -976,13 +984,13 @@
             </div>
           </div>
         </div>
-        <div class="flowchart-note">关系按六条链路拆开：部署与域名、状态监控、Marzban 订阅控制、服务发布、Telegram Bot、本机运维。Cloudflare 负责边缘入口和对象存储，HK39 是监控 / Bot / Marzban 的控制中枢；JP NAT、DE Long、Azure SG、Azure HK、GCP Iowa、US Dallas、Azure HDU KR、Japan Auto 已纳入订阅控制。</div>
+        <div class="flowchart-note">关系按六条链路拆开：部署与域名、状态监控、Marzban 订阅控制、服务发布、Telegram Bot、本机运维。除哪吒面板、Marzban 面板和 Telegram Bot 这类需要常驻进程的服务跑在 HK39 上，博客、VPS 总控、文件站、状态 JSON 等公开网页基本都是 GitHub + Cloudflare 这一套：GitHub 管源码，Cloudflare Pages / Workers / R2 / Tunnel 负责发布和入口；JP NAT、DE Long、Azure SG、Azure HK、GCP Iowa、US Dallas、Azure HDU KR、Japan Auto 已纳入订阅控制。</div>
       </div>
     </section>
 
     <div class="footer">
       数据文件：<code>https://files.xushuo.uk/status/vps-status.json</code><br>
-      状态数据来自 HK39 的 <code>/root/vps-status/publish_status.py</code>；NAT 机器如果业务端口和 SSH 端口不同，在页面的 <code>SSH_OVERRIDES</code> 里修正。
+      状态数据来自 HK39 的 <code>/root/vps-status/publish_status.py</code>；哪吒面板在 <code>http://103.122.247.99:8008</code>，主要负责 Agent 状态采集。Azure 机器的月内流量优先来自 Azure Monitor，US Dallas / Japan Auto 等特殊入口用端口探测补充；NAT 机器如果业务端口和 SSH 端口不同，在页面的 <code>SSH_OVERRIDES</code> 里修正。
     </div>
   </main>
 
@@ -1119,6 +1127,22 @@
       }).join("");
     }
 
+    function renderTrafficSource(server) {
+      const source = server.traffic_source || "";
+      const note = server.traffic_note || "";
+      if (!source && !note) return "";
+
+      const labels = {
+        "azure-monitor": "来源：Azure Monitor 自然月累计",
+        "nezha-ledger": "来源：哪吒 + 本地账本",
+        "nezha-raw": "来源：哪吒原始上报",
+        "subscription-port-check": "来源：端口探测"
+      };
+
+      const text = labels[source] || source || note;
+      return `<div class="metric-note">${escapeHtml(text)}</div>`;
+    }
+
     function renderServers(servers) {
       const grid = document.getElementById("serverGrid");
 
@@ -1179,6 +1203,7 @@
               <div class="metric metric-wide">
                 <div class="metric-label">流量</div>
                 <div class="metric-value">${escapeHtml(server.traffic || "-")}</div>
+                ${renderTrafficSource(server)}
               </div>
             </div>
 
