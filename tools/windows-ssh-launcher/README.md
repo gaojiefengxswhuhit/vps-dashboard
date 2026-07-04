@@ -38,4 +38,4 @@ Set-ExecutionPolicy -Scope Process Bypass -Force
 
 本地处理脚本只接受 `vpsssh://connect` 传入的 `user`、`host`、`port`、`key` 参数，并且会校验字段格式，然后只执行 `ssh`。它不会执行网页传来的任意 PowerShell 命令。
 
-脚本还会限制目标主机必须存在于 `https://files.xushuo.uk/status/vps-status.json`，并内置当前 6 台 VPS 的 IP 作为离线兜底白名单。
+脚本还会限制目标主机必须存在于 `https://files.xushuo.uk/status/vps-status.json`，并内置当前 VPS 的 IP 作为离线兜底白名单。
