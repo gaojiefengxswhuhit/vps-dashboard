@@ -752,12 +752,6 @@
           <div class="service-url">blog.xushuo.uk</div>
         </a>
 
-        <a class="card service-card" href="https://pan.xushuo.uk" target="_blank">
-          <div class="service-icon">🗂️</div>
-          <div class="service-name">OpenList 网盘</div>
-          <div class="service-url">pan.xushuo.uk</div>
-        </a>
-
         <a class="card service-card" href="https://dl.xushuo.uk" target="_blank">
           <div class="service-icon">📦</div>
           <div class="service-name">R2 下载站</div>
@@ -847,7 +841,7 @@
                 </div>
                 <div class="flow-node azure">
                   <strong>服务承载节点</strong>
-                  <span>Azure SG：OpenList、cloudflared、Reality<br>Azure KR：Reality 节点</span>
+                  <span>Azure SG：cloudflared、Reality<br>Azure KR：Reality 节点</span>
                 </div>
               </div>
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>Agent<br>上报</span></div>
@@ -920,13 +914,13 @@
                 </div>
                 <div class="flow-node azure">
                   <strong>Tunnel 后端</strong>
-                  <span>Azure SG：pan.xushuo.uk / OpenList<br>HK39：marzban.xushuo.uk / 控制面板<br>cloudflared 主动出站</span>
+                  <span>Azure SG：cloudflared / Reality<br>HK39：marzban.xushuo.uk / 控制面板<br>cloudflared 主动出站</span>
                 </div>
               </div>
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>公开访问</span></div>
               <div class="flow-node dashboard">
                 <strong>服务入口</strong>
-                <span>pan.xushuo.uk：OpenList<br>files.xushuo.uk：R2 文件管理 / 下载<br>marzban.xushuo.uk：订阅面板<br>dl.xushuo.uk：状态和下载</span>
+                <span>files.xushuo.uk：R2 文件管理 / 下载<br>marzban.xushuo.uk：订阅面板<br>dl.xushuo.uk：状态和下载</span>
               </div>
             </div>
           </div>
