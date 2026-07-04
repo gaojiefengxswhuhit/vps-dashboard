@@ -831,11 +831,11 @@
               <div class="flow-stack">
                 <div class="flow-node vps">
                   <strong>被监控节点</strong>
-                  <span>Azure KR / Azure SG<br>JP NAT / DE Long / DE Short<br>哪吒 Agent 上报资源、流量和端口</span>
+                  <span>HK39 / Azure SG<br>JP NAT / DE Long<br>哪吒 Agent 上报资源、流量和端口</span>
                 </div>
                 <div class="flow-node azure">
                   <strong>服务承载节点</strong>
-                  <span>Azure SG：Reality 节点<br>Azure KR：Reality 节点</span>
+                  <span>Azure SG：Reality 节点<br>Azure HK / HDU KR / Japan Auto：订阅节点</span>
                 </div>
               </div>
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>Agent<br>上报</span></div>
@@ -859,7 +859,7 @@
           <div class="flow-lane">
             <div class="flow-lane-head">
               <div class="flow-lane-title">Marzban 订阅控制</div>
-              <div class="flow-lane-desc">HK39 做控制面板，JP NAT、DE Long、DE Short、Azure KR、Azure SG 都通过反向 SSH 隧道接入，用户订阅由 Marzban 统一开停。</div>
+              <div class="flow-lane-desc">HK39 做控制面板，JP NAT、DE Long、Azure SG、Azure HK、GCP Iowa、US Dallas、Azure HDU KR、Japan Auto 都接入 Marzban，用户订阅由 Marzban 统一开停。</div>
             </div>
             <div class="flow-row four">
               <div class="flow-node cloudflare">
@@ -874,12 +874,12 @@
               <div class="flow-arrow" aria-hidden="true">&harr;<span>反向<br>SSH</span></div>
               <div class="flow-node vps">
                 <strong>全 VPS Nodes</strong>
-                <span>5 个 Marzban Node 源码运行<br>管理端口经 HK39 反向转发<br>JP / DE / Azure 分别接管本机 Xray</span>
+                <span>多台 Marzban Node 接入 HK39<br>管理端口经 HK39 反向转发<br>JP / DE / Azure / GCP / US 节点分别接管本机 Xray</span>
               </div>
               <div class="flow-arrow" aria-hidden="true">&rarr;<span>生成<br>订阅</span></div>
               <div class="flow-node dashboard">
                 <strong>用户订阅</strong>
-                <span>6 个外网入口：JP、DE Long、DE Short、HK39、Azure KR、Azure SG<br>一个 UUID 管全部节点<br>停用户即可切断整组订阅</span>
+                <span>公开入口：JP NAT、DE Long、Azure SG、Azure HK、GCP Iowa、US Dallas、Azure HDU KR、Japan Auto<br>一个 UUID 管全部节点<br>停用户即可切断整组订阅</span>
               </div>
             </div>
           </div>
@@ -966,17 +966,17 @@
               <div class="flow-stack">
                 <div class="flow-node vps">
                   <strong>NAT VPS</strong>
-                  <span>JP NAT SSH：10475<br>DE Long SSH：20483<br>DE Short SSH：45192<br>业务端口和 SSH 端口分开</span>
+                  <span>JP NAT SSH：10475<br>DE Long SSH：20483<br>业务端口和 SSH 端口分开</span>
                 </div>
                 <div class="flow-node azure">
                   <strong>固定公网 VPS</strong>
-                  <span>HK39：root / 103.122.247.99<br>Azure KR：azureuser / 20.196.247.193<br>Azure SG：azureuser / 4.194.211.209</span>
+                  <span>HK39：root / 103.122.247.99<br>Azure SG：azureuser / 4.194.211.209<br>Azure HK / HDU KR / Japan Auto：订阅侧节点</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="flowchart-note">关系按六条链路拆开：部署与域名、状态监控、Marzban 订阅控制、服务发布、Telegram Bot、本机运维。Cloudflare 负责边缘入口和对象存储，HK39 是监控 / Bot / Marzban 的控制中枢，HK39、Azure KR、Azure SG、JP NAT、DE Long、DE Short 都已纳入订阅控制。</div>
+        <div class="flowchart-note">关系按六条链路拆开：部署与域名、状态监控、Marzban 订阅控制、服务发布、Telegram Bot、本机运维。Cloudflare 负责边缘入口和对象存储，HK39 是监控 / Bot / Marzban 的控制中枢；JP NAT、DE Long、Azure SG、Azure HK、GCP Iowa、US Dallas、Azure HDU KR、Japan Auto 已纳入订阅控制。</div>
       </div>
     </section>
 
@@ -992,7 +992,6 @@
     const SSH_OVERRIDES = {
       "JP NAT": 'ssh -i "D:\\Download\\xushuo_key.pem" root@154.36.187.99 -p 10475',
       "DE Long": 'ssh -i "D:\\Download\\xushuo_key.pem" root@89.144.8.91 -p 20483',
-      "DE Short": 'ssh -i "D:\\Download\\xushuo_key.pem" root@89.106.78.178 -p 45192'
     };
 
 
