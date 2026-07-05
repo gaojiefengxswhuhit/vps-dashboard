@@ -126,6 +126,20 @@
       text-align: right;
     }
 
+    .mobile-toggle {
+      display: none;
+      width: 100%;
+      min-height: 44px;
+      margin-top: 12px;
+      border: 1px solid rgba(122,167,255,0.28);
+      border-radius: 14px;
+      color: #dce8ff;
+      background: rgba(122,167,255,0.12);
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
     .summary-grid, .service-grid, .server-grid {
       display: grid;
       gap: 14px;
@@ -585,6 +599,15 @@
         max-width: none;
         width: fit-content;
       }
+
+      .mobile-toggle { display: block; }
+
+      .mobile-collapsed .service-card:nth-of-type(n+4),
+      .mobile-collapsed .server-card:nth-of-type(n+5),
+      .mobile-collapsed .flow-lane:nth-of-type(n+3),
+      .mobile-collapsed .flowchart-note {
+        display: none;
+      }
     }
 
     @media (max-width: 520px) {
@@ -648,7 +671,7 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" data-collapse-section data-collapsed-label="展开全部快捷入口" data-expanded-label="收起快捷入口">
       <div class="section-title">
         <h2>快捷入口</h2>
         <div class="desc">Cloudflare Pages / R2 / Worker / Tunnel / 哪吒 / Marzban / VPS 控制台</div>
@@ -680,9 +703,10 @@
           <div class="service-url">vps.xushuo.uk</div>
         </a>
       </div>
+      <button class="mobile-toggle" type="button">展开全部快捷入口</button>
     </section>
 
-    <section class="section">
+    <section class="section" data-collapse-section data-collapsed-label="展开全部 VPS" data-expanded-label="收起 VPS">
       <div class="section-title">
         <h2>VPS 实时状态与登录</h2>
         <div class="desc">状态、用途、端口、资源、流量、SSH 登录命令集中显示。</div>
@@ -691,9 +715,10 @@
       <div id="serverGrid" class="server-grid">
         <div class="loading">正在加载实时 VPS 状态……</div>
       </div>
+      <button class="mobile-toggle" type="button">展开全部 VPS</button>
     </section>
 
-    <section class="section">
+    <section class="section" data-collapse-section data-collapsed-label="展开完整流程图" data-expanded-label="收起流程图">
       <div class="section-title">
         <h2>云服务架构流程图</h2>
         <div class="desc">把 Cloudflare、HK39、Marzban、Telegram Bot、Azure、GCP、NAT VPS 和本机运维关系串起来。</div>
@@ -784,6 +809,7 @@
         </div>
         <div class="flowchart-note">除哪吒面板、Marzban 面板和 Telegram Bot 这类需要常驻进程的服务跑在 HK39 上，博客、VPS 总控、文件站、状态 JSON 等公开网页基本都是 GitHub + Cloudflare 这一套；代理节点和订阅控制由 Marzban 串联。</div>
       </div>
+      <button class="mobile-toggle" type="button">展开完整流程图</button>
     </section>
 
     <div class="footer">
@@ -930,6 +956,41 @@
       return ["VPS", ""];
     }
 
+    function serverSortWeight(server) {
+      const name = cleanText(server.name || server.raw_name, "");
+      const raw = cleanText(server.raw_name || "", "");
+      const joined = `${name} ${raw}`;
+      const exact = {
+        "Azure SG": 10,
+        "Azure HK": 20,
+        "Azure KR": 30,
+        "Azure JP West": 40,
+        "Azure JP East": 50,
+        "Azure HDU JP East": 60,
+        "Azure HDU KR": 70,
+        "Japan Auto": 90,
+        "JP NAT": 100,
+        "DE Long": 110,
+        "GCP Iowa": 120,
+        "HK39": 900,
+      };
+      if (Object.prototype.hasOwnProperty.call(exact, name)) return exact[name];
+      if (/^Azure/i.test(joined)) return 80;
+      if (/Japan|JP/i.test(joined)) return 130;
+      if (/DE|Germany/i.test(joined)) return 140;
+      if (/GCP|Iowa/i.test(joined)) return 150;
+      if (/HK39/i.test(joined)) return 900;
+      return 500;
+    }
+
+    function sortServers(servers) {
+      return [...servers].sort((a, b) => {
+        const diff = serverSortWeight(a) - serverSortWeight(b);
+        if (diff) return diff;
+        return cleanText(a.name || "").localeCompare(cleanText(b.name || ""), "zh-CN");
+      });
+    }
+
     function renderPortTags(server) {
       const ports = Array.isArray(server.ports) ? server.ports : [];
       const status = server.port_status || {};
@@ -961,7 +1022,7 @@
         return;
       }
 
-      grid.innerHTML = servers.map(server => {
+      grid.innerHTML = sortServers(servers).map(server => {
         const name = cleanText(server.name || server.raw_name, "Unknown");
         const rawName = cleanText(server.raw_name || "", "");
         const online = !!server.online;
@@ -1018,6 +1079,7 @@
 
       bindCopyButtons();
       bindLaunchButtons();
+      applyMobileCollapseState();
     }
 
     async function copyText(text, btn) {
@@ -1080,6 +1142,36 @@
       box.textContent = "";
     }
 
+    function applyMobileCollapseState() {
+      const mobile = window.matchMedia("(max-width: 820px)").matches;
+      document.querySelectorAll("[data-collapse-section]").forEach(section => {
+        if (!section.dataset.expanded) section.dataset.expanded = "false";
+        const expanded = section.dataset.expanded === "true";
+        section.classList.toggle("mobile-collapsed", mobile && !expanded);
+        const btn = section.querySelector(".mobile-toggle");
+        if (btn) {
+          btn.textContent = expanded
+            ? section.dataset.expandedLabel
+            : section.dataset.collapsedLabel;
+        }
+      });
+    }
+
+    function bindMobileToggles() {
+      document.querySelectorAll("[data-collapse-section]").forEach(section => {
+        if (section.dataset.toggleBound === "true") return;
+        section.dataset.toggleBound = "true";
+        const btn = section.querySelector(".mobile-toggle");
+        if (!btn) return;
+        btn.onclick = () => {
+          section.dataset.expanded = section.dataset.expanded === "true" ? "false" : "true";
+          applyMobileCollapseState();
+        };
+      });
+      window.addEventListener("resize", applyMobileCollapseState);
+      applyMobileCollapseState();
+    }
+
     async function loadStatus() {
       try {
         const res = await fetch(DATA_URL + "?ts=" + Date.now(), { cache: "no-store" });
@@ -1103,6 +1195,7 @@
       }
     }
 
+    bindMobileToggles();
     loadStatus();
     setInterval(loadStatus, REFRESH_MS);
   </script>
