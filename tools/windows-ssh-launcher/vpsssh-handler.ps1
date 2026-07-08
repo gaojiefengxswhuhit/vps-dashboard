@@ -139,6 +139,9 @@ $user = $params["user"]
 $hostName = $params["host"]
 $port = $params["port"]
 $key = $params["key"]
+if (-not $key) {
+  $key = $params["identity"]
+}
 
 Assert-Match -Name "user" -Value $user -Pattern "^[A-Za-z0-9._-]+$"
 Assert-Match -Name "host" -Value $hostName -Pattern "^[A-Za-z0-9._:-]+$"
