@@ -146,7 +146,7 @@
     }
 
     .summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .service-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .service-grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
     .server-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
     .summary-card {
@@ -674,7 +674,7 @@
     <section class="section" data-collapse-section data-collapsed-label="展开全部快捷入口" data-expanded-label="收起快捷入口">
       <div class="section-title">
         <h2>快捷入口</h2>
-        <div class="desc">Cloudflare Pages / R2 / Worker / Tunnel / 哪吒 / Marzban / VPS 控制台</div>
+        <div class="desc">Cloudflare Pages / R2 / Worker / Tunnel / 邮箱 / Marzban / VPS 控制台</div>
       </div>
       <div class="service-grid">
         <a class="card service-card" href="https://blog.xushuo.uk" target="_blank">
@@ -691,6 +691,11 @@
           <div class="service-icon">Marzban</div>
           <div class="service-name">订阅面板</div>
           <div class="service-url">marzban.xushuo.uk</div>
+        </a>
+        <a class="card service-card" href="mailto:admin@xushuo.uk">
+          <div class="service-icon">Mail</div>
+          <div class="service-name">域名邮箱</div>
+          <div class="service-url">admin@xushuo.uk</div>
         </a>
         <a class="card service-card" href="https://vps.xushuo.uk" target="_blank">
           <div class="service-icon">VPS</div>
