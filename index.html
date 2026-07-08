@@ -665,7 +665,7 @@
             <span class="badge live">SG JSON</span>
           </div>
           <div class="small-text">
-            <a href="https://nezha.xushuo.uk/status/vps-status.json" target="_blank">nezha.xushuo.uk/status/vps-status.json</a>
+            <a href="https://status.xushuo.uk:8443/vps-status.json" target="_blank">status.xushuo.uk:8443/vps-status.json</a>
           </div>
         </article>
       </div>
@@ -686,11 +686,6 @@
           <div class="service-icon">Files</div>
           <div class="service-name">文件管理</div>
           <div class="service-url">files.xushuo.uk</div>
-        </a>
-        <a class="card service-card" href="https://nezha.xushuo.uk" target="_blank">
-          <div class="service-icon">Nezha</div>
-          <div class="service-name">哪吒面板</div>
-          <div class="service-url">nezha.xushuo.uk</div>
         </a>
         <a class="card service-card" href="https://marzban.xushuo.uk/dashboard/" target="_blank">
           <div class="service-icon">Marzban</div>
@@ -742,7 +737,7 @@
           <div class="flow-lane">
             <div class="flow-lane-head">
               <div class="flow-lane-title">状态数据链路</div>
-              <div class="flow-lane-desc">VPS 状态由 Azure SG 汇总；Azure 月内流量优先读 Azure Monitor；状态 JSON 由 Azure SG 每分钟生成并通过 nezha.xushuo.uk 提供。</div>
+              <div class="flow-lane-desc">VPS 状态由 Azure SG 汇总；Azure 月内流量优先读 Azure Monitor；状态 JSON 由 Azure SG 每分钟生成并通过 status.xushuo.uk 提供。</div>
             </div>
             <div class="flow-row four">
               <div class="flow-stack">
@@ -750,9 +745,9 @@
                 <div class="flow-node azure"><strong>Azure 节点</strong><span>Azure SG / HK / JP / HDU<br>流量来自 Azure Monitor<br>订阅入口用端口探测补充</span></div>
               </div>
               <div class="flow-arrow">→<span>上报</span></div>
-              <div class="flow-node hk39"><strong>Azure SG</strong><span>哪吒服务端：nezha.xushuo.uk<br>publish_status.py 汇总哪吒 API + Azure Monitor<br>同时承载 Bot / Marzban / 自动化任务</span></div>
+              <div class="flow-node hk39"><strong>Azure SG</strong><span>publish_status.py 生成状态 JSON<br>SSH / 端口探测 + Azure Monitor<br>同时承载 Bot / Marzban / 自动化任务</span></div>
               <div class="flow-arrow">→<span>生成</span></div>
-              <div class="flow-node cloudflare"><strong>SG 状态 JSON</strong><span>vps-status.json<br>nezha.xushuo.uk/status<br>由 Caddy 直接提供</span></div>
+              <div class="flow-node cloudflare"><strong>SG 状态 JSON</strong><span>vps-status.json<br>status.xushuo.uk:8443<br>由 Caddy 直接提供</span></div>
               <div class="flow-arrow">→<span>30 秒读取</span></div>
               <div class="flow-node dashboard"><strong>VPS 总控</strong><span>状态卡片、快捷入口、端口状态<br>SSH 覆盖表修正 NAT 登录端口<br>页面自动刷新</span></div>
             </div>
@@ -813,13 +808,13 @@
     </section>
 
     <div class="footer">
-      数据文件：<code>https://nezha.xushuo.uk/status/vps-status.json</code><br>
-      状态数据来自 Azure SG 的 <code>/root/vps-status/publish_status.py</code>；哪吒面板在 <code>https://nezha.xushuo.uk</code>。Azure 机器月内流量优先来自 Azure Monitor，订阅入口用端口探测补充。
+      数据文件：<code>https://status.xushuo.uk:8443/vps-status.json</code><br>
+      状态数据来自 Azure SG 的 <code>/root/vps-status/publish_status.py</code>；JSON 由 SG 上的 Caddy 直接提供。Azure 机器月内流量优先来自 Azure Monitor，订阅入口用端口探测补充。
     </div>
   </main>
 
   <script>
-    const DATA_URL = "https://nezha.xushuo.uk/status/vps-status.json";
+    const DATA_URL = "https://status.xushuo.uk:8443/vps-status.json";
     const REFRESH_MS = 30000;
     const SSH_OVERRIDES = {
       "JP NAT": 'ssh -i "D:\\Download\\xushuo_key.pem" root@154.36.187.99 -p 10475',
@@ -1190,7 +1185,7 @@
       } catch (e) {
         showError(
           "读取实时状态失败：" + e.message +
-          "\n\n可以先直接打开 https://nezha.xushuo.uk/status/vps-status.json 检查 JSON 是否正常。"
+          "\n\n可以先直接打开 https://status.xushuo.uk:8443/vps-status.json 检查 JSON 是否正常。"
         );
       }
     }
