@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f6f8" />
+  <title>xushuo 云端控制台</title>
+  <script defer src="https://unpkg.com/lucide@0.475.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-soft: #f8fafb;
+      --surface-strong: #eef2f4;
+      --line: #dfe5e8;
+      --line-strong: #cbd4d9;
+      --text: #172126;
+      --muted: #66747c;
+      --subtle: #8a969d;
+      --blue: #2864dc;
+      --blue-soft: #eaf0ff;
+      --teal: #087f73;
+      --teal-soft: #e4f4f1;
+      --green: #16834b;
+      --green-soft: #e8f5ed;
+      --amber: #9a6100;
+      --amber-soft: #fff3d6;
+      --red: #c53b45;
+      --red-soft: #fdecee;
+      --sidebar: 236px;
+      --topbar: 66px;
+      --radius: 7px;
+      --shadow: 0 1px 2px rgba(21, 33, 38, .04), 0 8px 24px rgba(21, 33, 38, .05);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--bg);
+      font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    svg { width: 18px; height: 18px; stroke-width: 1.9; }
+    code { font-family: "Cascadia Mono", Consolas, monospace; }
+    .hidden { display: none !important; }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 30;
+      width: var(--sidebar);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--line);
+      background: #fbfcfc;
+    }
+    .brand {
+      height: var(--topbar);
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      color: #fff;
+      background: #172126;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .brand-name { font-size: 15px; font-weight: 750; }
+    .brand-sub { margin-top: 1px; color: var(--subtle); font-size: 11px; }
+    .nav { flex: 1; padding: 16px 12px; }
+    .nav-label {
+      padding: 0 10px 8px;
+      color: var(--subtle);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-link {
+      width: 100%;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin: 2px 0;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 6px;
+      color: #536168;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 650;
+    }
+    .nav-link:hover { background: var(--surface-strong); color: var(--text); }
+    .nav-link.active { color: #123f9a; background: var(--blue-soft); }
+    .nav-link .nav-count {
+      min-width: 24px;
+      margin-left: auto;
+      padding: 2px 6px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(0,0,0,.045);
+      font-size: 11px;
+      text-align: center;
+    }
+    .sidebar-foot {
+      margin: 0 12px 14px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .source-line { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
+    .source-line .status-dot { width: 7px; height: 7px; }
+    .source-meta { margin-top: 7px; color: var(--subtle); font-size: 11px; line-height: 1.5; }
+
+    .workspace { grid-column: 2; min-width: 0; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: var(--topbar);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 0 26px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(244, 246, 248, .94);
+      backdrop-filter: blur(12px);
+    }
+    .page-kicker { color: var(--subtle); font-size: 11px; font-weight: 700; }
+    .page-title { margin: 2px 0 0; font-size: 18px; line-height: 1.2; }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .search-box {
+      width: min(330px, 34vw);
+      height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 11px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+    .search-box:focus-within { border-color: #8ea9e8; box-shadow: 0 0 0 3px rgba(40,100,220,.08); }
+    .search-box svg { flex: 0 0 auto; color: var(--subtle); }
+    .search-box input { width: 100%; border: 0; outline: 0; color: var(--text); background: transparent; font-size: 13px; }
+    .icon-btn, .text-btn {
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      color: var(--text);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .icon-btn { width: 38px; padding: 0; }
+    .text-btn { padding: 0 13px; }
+    .icon-btn:hover, .text-btn:hover { border-color: #aebac0; background: var(--surface-soft); }
+    .icon-btn.primary, .text-btn.primary { color: #fff; border-color: var(--blue); background: var(--blue); }
+    .icon-btn:disabled, .text-btn:disabled { cursor: not-allowed; opacity: .45; }
+    .spinning svg { animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .content { width: min(1440px, 100%); margin: 0 auto; padding: 24px 26px 54px; }
+    .view { display: none; }
+    .view.active { display: block; }
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .section-head h2 { margin: 0; font-size: 16px; }
+    .section-head p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .section-link { color: var(--blue); font-size: 12px; font-weight: 700; cursor: pointer; }
+    .section-block { margin-top: 24px; }
+
+    .notice-strip {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding: 9px 13px;
+      border: 1px solid #cfe7d8;
+      border-left: 4px solid var(--green);
+      border-radius: var(--radius);
+      background: #f5fbf7;
+    }
+    .notice-strip.alert { border-color: #f1cbd0; border-left-color: var(--red); background: #fff7f8; }
+    .notice-icon { color: var(--green); }
+    .notice-strip.alert .notice-icon { color: var(--red); }
+    .notice-copy { flex: 1; min-width: 0; }
+    .notice-title { font-size: 13px; font-weight: 750; }
+    .notice-text { margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .notice-time { color: var(--subtle); font-size: 11px; white-space: nowrap; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .stat-card {
+      min-height: 112px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .stat-label { color: var(--muted); font-size: 12px; font-weight: 650; }
+    .stat-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+    .stat-icon.teal { color: var(--teal); background: var(--teal-soft); }
+    .stat-icon.amber { color: var(--amber); background: var(--amber-soft); }
+    .stat-icon.green { color: var(--green); background: var(--green-soft); }
+    .stat-value { margin-top: 9px; font-size: 27px; font-weight: 780; line-height: 1; }
+    .stat-note { margin-top: 7px; color: var(--subtle); font-size: 11px; }
+
+    .overview-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr); gap: 14px; }
+    .panel {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .panel-head {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 15px;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-title { font-size: 13px; font-weight: 750; }
+    .panel-subtitle { color: var(--subtle); font-size: 11px; }
+    .fleet-list { padding: 4px 0; }
+    .fleet-row {
+      min-height: 54px;
+      display: grid;
+      grid-template-columns: 30px minmax(130px, 1.2fr) minmax(110px, .8fr) 92px 72px;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 15px;
+      border-bottom: 1px solid #edf0f2;
+      cursor: pointer;
+    }
+    .fleet-row:last-child { border-bottom: 0; }
+    .fleet-row:hover { background: var(--surface-soft); }
+    .region-code {
+      width: 28px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: #46545b;
+      background: var(--surface-soft);
+      font-size: 9px;
+      font-weight: 800;
+    }
+    .fleet-name { min-width: 0; font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fleet-role { min-width: 0; color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fleet-usage { color: var(--muted); font-size: 11px; }
+    .status-label { display: inline-flex; align-items: center; justify-content: flex-end; gap: 7px; color: var(--green); font-size: 11px; font-weight: 750; }
+    .status-label.offline { color: var(--red); }
+    .status-dot { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: currentColor; }
+    .mobile-status { display: none; }
+
+    .signal-list { padding: 6px 15px 12px; }
+    .signal-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #edf0f2; }
+    .signal-item:last-child { border-bottom: 0; }
+    .signal-mark { width: 8px; height: 8px; flex: 0 0 auto; margin-top: 5px; border-radius: 50%; background: var(--green); }
+    .signal-mark.warn { background: var(--amber); }
+    .signal-mark.bad { background: var(--red); }
+    .signal-main { min-width: 0; font-size: 12px; font-weight: 700; line-height: 1.4; }
+    .signal-meta { margin-top: 2px; color: var(--subtle); font-size: 11px; font-weight: 400; }
+
+    .quick-grid, .service-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .service-tile {
+      min-height: 104px;
+      display: flex;
+      flex-direction: column;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      transition: border-color .15s ease, transform .15s ease;
+    }
+    .service-tile:hover { transform: translateY(-1px); border-color: #aebbc2; }
+    .service-tile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .service-symbol {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+    .service-symbol.teal { color: var(--teal); background: var(--teal-soft); }
+    .service-symbol.amber { color: var(--amber); background: var(--amber-soft); }
+    .service-symbol.dark { color: #fff; background: #26343a; }
+    .service-arrow { color: var(--subtle); }
+    .service-name { margin-top: 10px; font-size: 13px; font-weight: 750; }
+    .service-meta { margin-top: 3px; color: var(--subtle); font-size: 10px; line-height: 1.35; overflow-wrap: anywhere; }
+
+    .platform-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
+    .platform-col { min-height: 176px; padding: 16px; border-right: 1px solid var(--line); }
+    .platform-col:last-child { border-right: 0; }
+    .platform-number { color: var(--blue); font-size: 11px; font-weight: 800; }
+    .platform-name { margin-top: 5px; font-size: 15px; font-weight: 750; }
+    .platform-desc { margin: 6px 0 13px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .platform-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .mini-tag { padding: 4px 6px; border-radius: 4px; color: #506067; background: var(--surface-strong); font-size: 9px; font-weight: 700; }
+
+    .fleet-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .segmented {
+      display: inline-flex;
+      gap: 2px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+    .segment {
+      height: 30px;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 4px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .segment.active { color: var(--text); background: var(--surface-strong); }
+    .fleet-search { width: min(280px, 36vw); }
+
+    .server-table { overflow: hidden; }
+    .server-table-head, .server-table-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 1.3fr) minmax(120px, .8fr) 110px 110px 130px 92px 44px;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+    }
+    .server-table-head { height: 40px; border-bottom: 1px solid var(--line); color: var(--subtle); background: var(--surface-soft); font-size: 10px; font-weight: 750; }
+    .server-table-row { min-height: 66px; border-bottom: 1px solid #edf0f2; cursor: pointer; font-size: 11px; }
+    .server-table-row:last-child { border-bottom: 0; }
+    .server-table-row:hover { background: var(--surface-soft); }
+    .server-primary { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .server-primary-text { min-width: 0; }
+    .server-title { font-size: 12px; font-weight: 750; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .server-ip { margin-top: 3px; color: var(--subtle); font-family: "Cascadia Mono", Consolas, monospace; font-size: 10px; }
+    .table-muted { min-width: 0; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .table-traffic { color: #344249; font-size: 10px; line-height: 1.4; }
+    .row-action { width: 30px; height: 30px; border: 0; border-radius: 5px; color: var(--subtle); background: transparent; cursor: pointer; }
+    .row-action:hover { color: var(--text); background: var(--surface-strong); }
+    .empty-state { padding: 46px 18px; color: var(--muted); text-align: center; font-size: 12px; }
+
+    .architecture {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .architecture::before { content: ""; position: absolute; top: 54px; left: 12%; right: 12%; height: 1px; background: var(--line-strong); }
+    .architecture-node { position: relative; min-width: 0; padding-top: 48px; }
+    .architecture-icon {
+      position: absolute;
+      top: 18px;
+      left: 0;
+      z-index: 1;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      color: var(--blue);
+      background: var(--surface);
+    }
+    .architecture-title { font-size: 13px; font-weight: 750; }
+    .architecture-copy { margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .architecture-items { margin-top: 10px; display: grid; gap: 5px; }
+    .architecture-item { padding: 6px 8px; border-left: 2px solid var(--line-strong); color: #45535a; background: var(--surface-soft); font-size: 10px; line-height: 1.4; }
+
+    .detail-dialog {
+      width: min(520px, calc(100vw - 28px));
+      max-height: min(760px, calc(100vh - 28px));
+      margin: auto;
+      padding: 0;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: 0 24px 70px rgba(21,33,38,.24);
+    }
+    .detail-dialog::backdrop { background: rgba(16, 26, 31, .42); backdrop-filter: blur(2px); }
+    .dialog-head { min-height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+    .dialog-title-wrap { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .dialog-title { font-size: 15px; font-weight: 780; }
+    .dialog-subtitle { margin-top: 2px; color: var(--subtle); font-size: 10px; }
+    .dialog-body { padding: 16px; overflow: auto; }
+    .detail-status { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px; border-radius: 6px; background: var(--green-soft); }
+    .detail-status.bad { background: var(--red-soft); }
+    .detail-status-title { font-size: 12px; font-weight: 750; }
+    .detail-status-copy { margin-top: 2px; color: var(--muted); font-size: 10px; }
+    .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+    .detail-metric { min-height: 67px; padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-soft); }
+    .detail-label { color: var(--subtle); font-size: 9px; font-weight: 750; }
+    .detail-value { margin-top: 5px; font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+    .detail-section { margin-top: 16px; }
+    .detail-section-title { margin-bottom: 7px; font-size: 11px; font-weight: 750; }
+    .detail-code { padding: 10px; border: 1px solid var(--line); border-radius: 6px; color: #35434a; background: #f5f7f8; font-family: "Cascadia Mono", Consolas, monospace; font-size: 10px; line-height: 1.55; overflow-wrap: anywhere; }
+    .dialog-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .dialog-actions .text-btn { flex: 1; }
+
+    .toast {
+      position: fixed;
+      z-index: 90;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 16px);
+      padding: 9px 13px;
+      border-radius: 6px;
+      color: #fff;
+      background: #26343a;
+      box-shadow: 0 10px 30px rgba(21,33,38,.24);
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .mobile-header, .bottom-nav { display: none; }
+
+    @media (max-width: 1080px) {
+      :root { --sidebar: 206px; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .quick-grid, .service-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .server-table-head, .server-table-row { grid-template-columns: minmax(170px, 1.2fr) minmax(110px, .7fr) 90px 110px 92px 40px; }
+      .server-table-head > :nth-child(5), .server-table-row > :nth-child(5) { display: none; }
+    }
+
+    @media (max-width: 820px) {
+      :root { --topbar: 58px; }
+      body { padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
+      .app-shell { display: block; }
+      .sidebar, .topbar { display: none; }
+      .workspace { display: block; }
+      .mobile-header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        height: var(--topbar);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(244,246,248,.96);
+        backdrop-filter: blur(10px);
+      }
+      .mobile-brand { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 780; }
+      .mobile-brand .brand-mark { width: 29px; height: 29px; font-size: 13px; }
+      .mobile-actions { display: flex; gap: 6px; }
+      .mobile-actions .icon-btn { width: 36px; height: 36px; }
+      .content { padding: 14px 12px 34px; }
+      .notice-strip { align-items: flex-start; }
+      .notice-time { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .stat-card { min-height: 100px; padding: 12px; }
+      .stat-value { font-size: 23px; }
+      .overview-grid { grid-template-columns: 1fr; gap: 10px; }
+      .quick-grid, .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .service-tile { min-height: 98px; padding: 12px; }
+      .fleet-row { grid-template-columns: 28px minmax(110px, 1fr) 74px; padding: 7px 12px; }
+      .fleet-row .fleet-role, .fleet-row .fleet-usage { display: none; }
+      .platform-grid { grid-template-columns: 1fr; }
+      .platform-col { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .platform-col:last-child { border-bottom: 0; }
+      .section-block { margin-top: 20px; }
+      .section-head { align-items: flex-start; }
+      .section-head p { max-width: 250px; }
+      .fleet-toolbar { align-items: stretch; flex-direction: column; }
+      .segmented { width: 100%; overflow-x: auto; }
+      .segment { flex: 1 0 auto; }
+      .fleet-search { width: 100%; }
+      .server-table-head { display: none; }
+      .server-table-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        min-height: 74px;
+        padding: 10px 12px;
+      }
+      .server-table-row > :not(.server-primary):not(.row-action) { display: none; }
+      .server-primary .mobile-status { display: inline-flex; margin-top: 5px; justify-content: flex-start; }
+      .architecture { grid-template-columns: 1fr; gap: 0; padding: 8px 16px 14px; }
+      .architecture::before { top: 24px; bottom: 34px; left: 29px; right: auto; width: 1px; height: auto; }
+      .architecture-node { padding: 16px 0 16px 46px; }
+      .architecture-icon { top: 14px; left: 0; }
+      .detail-dialog { width: calc(100vw - 16px); max-height: calc(100vh - 16px); }
+      .bottom-nav {
+        position: fixed;
+        z-index: 40;
+        inset: auto 0 0;
+        height: calc(62px + env(safe-area-inset-bottom));
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 4px 6px env(safe-area-inset-bottom);
+        border-top: 1px solid var(--line);
+        background: rgba(255,255,255,.97);
+        backdrop-filter: blur(12px);
+      }
+      .bottom-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        border: 0;
+        color: var(--subtle);
+        background: transparent;
+        font-size: 9px;
+        font-weight: 700;
+      }
+      .bottom-link.active { color: var(--blue); }
+      .bottom-link svg { width: 19px; height: 19px; }
+    }
+
+    @media (max-width: 390px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-card { min-height: 94px; }
+      .stat-note { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .quick-grid, .service-grid { grid-template-columns: 1fr 1fr; }
+      .service-name { font-size: 12px; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">X</div>
+        <div><div class="brand-name">xushuo 控制台</div><div class="brand-sub">Cloud operations</div></div>
+      </div>
+      <nav class="nav" aria-label="主导航">
+        <div class="nav-label">工作区</div>
+        <button class="nav-link active" data-view-target="overview"><i data-lucide="layout-dashboard"></i><span>总览</span></button>
+        <button class="nav-link" data-view-target="services"><i data-lucide="panels-top-left"></i><span>服务入口</span><span class="nav-count">8</span></button>
+        <button class="nav-link" data-view-target="fleet"><i data-lucide="server"></i><span>机器</span><span class="nav-count" id="navFleetCount">--</span></button>
+        <button class="nav-link" data-view-target="architecture"><i data-lucide="workflow"></i><span>架构</span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="source-line"><span class="status-dot"></span><span>SG 状态源在线</span></div>
+        <div class="source-meta">每分钟采集<br>页面每 30 秒刷新</div>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div><div class="page-kicker">XUSHUO CLOUD</div><h1 class="page-title" id="pageTitle">运行总览</h1></div>
+        <div class="top-actions">
+          <label class="search-box" aria-label="搜索机器与服务"><i data-lucide="search"></i><input id="globalSearch" placeholder="搜索机器、IP 或服务" autocomplete="off" /></label>
+          <a class="icon-btn" href="./vps-status.json" target="_blank" title="打开原始状态 JSON"><i data-lucide="braces"></i></a>
+          <button class="icon-btn" id="refreshButton" type="button" title="立即刷新"><i data-lucide="refresh-cw"></i></button>
+        </div>
+      </header>
+
+      <header class="mobile-header">
+        <div class="mobile-brand"><div class="brand-mark">X</div><span id="mobilePageTitle">运行总览</span></div>
+        <div class="mobile-actions">
+          <a class="icon-btn" href="./vps-status.json" target="_blank" title="状态 JSON"><i data-lucide="braces"></i></a>
+          <button class="icon-btn" id="mobileRefreshButton" type="button" title="立即刷新"><i data-lucide="refresh-cw"></i></button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="view active" data-view="overview">
+          <div class="notice-strip" id="healthStrip">
+            <div class="notice-icon"><i data-lucide="circle-check"></i></div>
+            <div class="notice-copy"><div class="notice-title" id="healthTitle">正在读取运行状态</div><div class="notice-text" id="healthText">连接 Azure SG 状态源...</div></div>
+            <div class="notice-time" id="updatedAt">--</div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">在线机器</span><span class="stat-icon green"><i data-lucide="server"></i></span></div><div class="stat-value" id="onlineStat">--/--</div><div class="stat-note" id="onlineNote">等待状态数据</div></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">需要处理</span><span class="stat-icon amber"><i data-lucide="triangle-alert"></i></span></div><div class="stat-value" id="alertStat">--</div><div class="stat-note" id="alertNote">离线、端口与资源异常</div></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">对外服务</span><span class="stat-icon"><i data-lucide="waypoints"></i></span></div><div class="stat-value">8</div><div class="stat-note">Cloudflare + Azure SG</div></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">自动化</span><span class="stat-icon teal"><i data-lucide="bot"></i></span></div><div class="stat-value">运行中</div><div class="stat-note">Bot、状态采集与故障自愈</div></article>
+          </div>
+
+          <div class="section-block overview-grid">
+            <section class="panel">
+              <div class="panel-head"><div><div class="panel-title">机器健康</div><div class="panel-subtitle">按运维优先级显示</div></div><button class="section-link" data-view-target="fleet">查看全部</button></div>
+              <div class="fleet-list" id="overviewFleet"><div class="empty-state">正在加载机器状态...</div></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head"><div><div class="panel-title">运行信号</div><div class="panel-subtitle">当前数据自动判断</div></div><span class="panel-subtitle" id="signalCount">--</span></div>
+              <div class="signal-list" id="signalList"><div class="empty-state">正在分析...</div></div>
+            </section>
+          </div>
+
+          <section class="section-block">
+            <div class="section-head"><div><h2>常用入口</h2><p>日常管理直接到目标服务</p></div><button class="section-link" data-view-target="services">全部服务</button></div>
+            <div class="quick-grid" id="quickServices"></div>
+          </section>
+
+          <section class="section-block">
+            <div class="section-head"><div><h2>运行结构</h2><p>入口、控制中枢和执行节点各自承担清晰职责</p></div></div>
+            <div class="platform-grid">
+              <article class="platform-col"><div class="platform-number">01 / EDGE</div><div class="platform-name">Cloudflare 边缘入口</div><div class="platform-desc">域名、HTTPS、反向代理，以及 Pages、Workers 和 R2 服务。</div><div class="platform-tags"><span class="mini-tag">DNS</span><span class="mini-tag">Pages</span><span class="mini-tag">Workers</span><span class="mini-tag">R2</span></div></article>
+              <article class="platform-col"><div class="platform-number">02 / CONTROL</div><div class="platform-name">Azure SG 控制中枢</div><div class="platform-desc">状态采集、Caddy、Marzban、OpenList、机器人和自动化任务。</div><div class="platform-tags"><span class="mini-tag">Caddy</span><span class="mini-tag">Marzban</span><span class="mini-tag">Bot</span><span class="mini-tag">Watchdog</span></div></article>
+              <article class="platform-col"><div class="platform-number">03 / FLEET</div><div class="platform-name">多云执行节点</div><div class="platform-desc">Azure、GCP、Oracle 与 NAT 节点承载代理和区域化服务。</div><div class="platform-tags"><span class="mini-tag">Azure</span><span class="mini-tag">GCP</span><span class="mini-tag">Oracle</span><span class="mini-tag">NAT VPS</span></div></article>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" data-view="services">
+          <div class="section-head"><div><h2>服务入口</h2><p>Cloudflare 和 Azure SG 上的网页与管理工具</p></div></div>
+          <div class="service-grid" id="allServices"></div>
+        </section>
+
+        <section class="view" data-view="fleet">
+          <div class="section-head"><div><h2>机器</h2><p>状态、资源、流量与 SSH 操作集中管理</p></div></div>
+          <div class="fleet-toolbar">
+            <div class="segmented" aria-label="机器筛选">
+              <button class="segment active" data-filter="all">全部</button>
+              <button class="segment" data-filter="online">在线</button>
+              <button class="segment" data-filter="azure">Azure</button>
+              <button class="segment" data-filter="proxy">代理节点</button>
+              <button class="segment" data-filter="control">管理服务</button>
+            </div>
+            <label class="search-box fleet-search"><i data-lucide="search"></i><input id="fleetSearch" placeholder="筛选名称、IP、用途" autocomplete="off" /></label>
+          </div>
+          <div class="panel server-table">
+            <div class="server-table-head"><span>机器</span><span>用途</span><span>CPU / 内存</span><span>硬盘</span><span>流量</span><span>状态</span><span></span></div>
+            <div id="serverTable"><div class="empty-state">正在加载...</div></div>
+          </div>
+        </section>
+
+        <section class="view" data-view="architecture">
+          <div class="section-head"><div><h2>服务架构</h2><p>从代码发布、域名入口到控制中枢和执行节点</p></div></div>
+          <div class="architecture">
+            <article class="architecture-node"><span class="architecture-icon"><i data-lucide="git-branch"></i></span><div class="architecture-title">代码与配置</div><div class="architecture-copy">GitHub 保存网页、机器人和运维脚本，变更经过留档后上线。</div><div class="architecture-items"><div class="architecture-item">blog-gaojiefeng</div><div class="architecture-item">vps-dashboard</div><div class="architecture-item">私有服务备份</div></div></article>
+            <article class="architecture-node"><span class="architecture-icon"><i data-lucide="cloud"></i></span><div class="architecture-title">Cloudflare</div><div class="architecture-copy">统一处理域名、TLS 与边缘服务，并代理到 Azure SG 源站。</div><div class="architecture-items"><div class="architecture-item">Pages：博客</div><div class="architecture-item">Workers：文件 / 邮箱 / 订阅</div><div class="architecture-item">Proxy：状态与管理入口</div></div></article>
+            <article class="architecture-node"><span class="architecture-icon"><i data-lucide="command"></i></span><div class="architecture-title">Azure SG</div><div class="architecture-copy">系统控制面：采集状态、托管面板、机器人、自动切换和故障自愈。</div><div class="architecture-items"><div class="architecture-item">Caddy + 状态 JSON</div><div class="architecture-item">Marzban + OpenList + 2FA</div><div class="architecture-item">Telegram / 微信 Bot</div></div></article>
+            <article class="architecture-node"><span class="architecture-icon"><i data-lucide="network"></i></span><div class="architecture-title">多云节点</div><div class="architecture-copy">Azure、GCP、Oracle 和 NAT VPS 提供区域节点，接受统一监控与订阅管理。</div><div class="architecture-items"><div class="architecture-item">Japan Auto 后端</div><div class="architecture-item">欧美与亚洲节点</div><div class="architecture-item">SSH / 端口 / Azure Monitor</div></div></article>
+          </div>
+
+          <section class="section-block">
+            <div class="section-head"><div><h2>数据链路</h2><p>状态页不依赖哪吒 Agent</p></div></div>
+            <div class="platform-grid">
+              <article class="platform-col"><div class="platform-number">COLLECT</div><div class="platform-name">采集</div><div class="platform-desc">SSH 读取 Linux/Windows 资源，端口探测补充可用性，Azure Monitor提供账号流量。</div></article>
+              <article class="platform-col"><div class="platform-number">PUBLISH</div><div class="platform-name">生成</div><div class="platform-desc">Azure SG 每分钟执行 publish_status.py，写入 vps-status.json。</div></article>
+              <article class="platform-col"><div class="platform-number">DISPLAY</div><div class="platform-name">展示</div><div class="platform-desc">Caddy 提供 HTML 与 JSON，Cloudflare 代理访问，控制台每 30 秒刷新。</div></article>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="手机导航">
+    <button class="bottom-link active" data-view-target="overview"><i data-lucide="layout-dashboard"></i><span>总览</span></button>
+    <button class="bottom-link" data-view-target="services"><i data-lucide="panels-top-left"></i><span>服务</span></button>
+    <button class="bottom-link" data-view-target="fleet"><i data-lucide="server"></i><span>机器</span></button>
+    <button class="bottom-link" data-view-target="architecture"><i data-lucide="workflow"></i><span>架构</span></button>
+  </nav>
+
+  <dialog class="detail-dialog" id="serverDialog">
+    <div class="dialog-head">
+      <div class="dialog-title-wrap"><span class="region-code" id="dialogRegion">--</span><div><div class="dialog-title" id="dialogTitle">机器详情</div><div class="dialog-subtitle" id="dialogIp">--</div></div></div>
+      <button class="icon-btn" id="closeDialog" type="button" title="关闭"><i data-lucide="x"></i></button>
+    </div>
+    <div class="dialog-body" id="dialogBody"></div>
+  </dialog>
+  <div class="toast" id="toast">已复制</div>
+
+  <script>
+    const DATA_URL = "./vps-status.json";
+    const REFRESH_MS = 30000;
+    const SSH_OVERRIDES = {
+      "JP NAT": 'ssh -i "D:\\Download\\xushuo_key.pem" root@154.36.187.99 -p 10475',
+      "DE Long": 'ssh -i "D:\\Download\\xushuo_key.pem" root@89.144.8.91 -p 20483',
+    };
+    const SERVICES = [
+      { name: "订阅管理", url: "https://marzban.xushuo.uk/dashboard/", meta: "Azure SG · Marzban", icon: "users", tone: "dark", quick: true },
+      { name: "网盘", url: "https://pan.xushuo.uk", meta: "Azure SG · OpenList", icon: "hard-drive", tone: "teal", quick: true },
+      { name: "文件后台", url: "https://files.xushuo.uk/@manage", meta: "Cloudflare · Worker / R2", icon: "folder-cog", tone: "blue", quick: true },
+      { name: "邮箱管理", url: "https://mail.xushuo.uk/", meta: "Cloudflare · Worker", icon: "mail", tone: "amber", quick: true },
+      { name: "博客", url: "https://blog.xushuo.uk", meta: "Cloudflare · Pages", icon: "notebook-pen", tone: "blue" },
+      { name: "双重验证", url: "https://2fa.xushuo.uk", meta: "Azure SG · 2FAuth", icon: "shield-check", tone: "teal" },
+      { name: "订阅入口", url: "https://sub.xushuo.uk", meta: "Cloudflare · Worker", icon: "radio-tower", tone: "blue" },
+      { name: "状态 JSON", url: "./vps-status.json", meta: "Azure SG · Caddy", icon: "braces", tone: "dark" },
+    ];
+    const COUNTRY_BY_NAME = [
+      [/HK|Hong Kong|香港/i, "HK"], [/SG|Singapore|新加坡/i, "SG"], [/JP|Japan|日本/i, "JP"],
+      [/KR|Korea|韩国/i, "KR"], [/London|United Kingdom|英国|Oracle/i, "GB"], [/(^|\s)DE(\s|$)|Germany|德国/i, "DE"],
+      [/US|Dallas|Iowa|United States|美国/i, "US"],
+    ];
+    const VIEW_TITLES = { overview: "运行总览", services: "服务入口", fleet: "机器", architecture: "服务架构" };
+    let statusData = null;
+    let servers = [];
+    let currentFilter = "all";
+    let toastTimer = null;
+
+    const $ = selector => document.querySelector(selector);
+    const $$ = selector => [...document.querySelectorAll(selector)];
+    const cleanText = (value, fallback = "-") => String(value ?? "").replace(/\uFFFD/g, "").trim() || fallback;
+    const escapeHtml = value => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+    const escapeAttr = value => escapeHtml(value).replaceAll("`", "&#096;");
+
+    function refreshIcons() {
+      if (window.lucide) window.lucide.createIcons({ attrs: { "aria-hidden": "true" } });
+    }
+
+    function getServers(data) {
+      if (Array.isArray(data?.servers)) return data.servers;
+      if (Array.isArray(data?.data?.servers)) return data.data.servers;
+      return Array.isArray(data) ? data : [];
+    }
+
+    function regionCode(server) {
+      const joined = [server.name, server.raw_name, server.ip, server.role].map(v => cleanText(v, "")).join(" ");
+      for (const [pattern, code] of COUNTRY_BY_NAME) if (pattern.test(joined)) return code;
+      return "VPS";
+    }
+
+    function sortWeight(server) {
+      const name = cleanText(server.name || server.raw_name, "");
+      const exact = { "Azure SG": 10, "Azure HK": 20, "Azure JP West": 30, "Azure JP East": 40, "Azure HDU JP West": 50, "Japan Auto": 80, "JP NAT": 100, "DE Long": 110, "GCP Iowa": 120, "Oracle A1 London": 130, "Oracle Micro London": 140, "HK39": 900 };
+      if (Object.prototype.hasOwnProperty.call(exact, name)) return exact[name];
+      if (/^Azure/i.test(name)) return 70;
+      return 500;
+    }
+
+    function sortedServers(list = servers) {
+      return [...list].sort((a, b) => sortWeight(a) - sortWeight(b) || cleanText(a.name).localeCompare(cleanText(b.name), "zh-CN"));
+    }
+
+    function percentNumber(value) {
+      const match = cleanText(value, "").match(/([\d.]+)\s*%/);
+      return match ? Number(match[1]) : null;
+    }
+
+    function usageRatio(value) {
+      const match = cleanText(value, "").match(/([\d.]+)\s*(KB|MB|GB|TB)\s*\/\s*([\d.]+)\s*(KB|MB|GB|TB)/i);
+      if (!match) return null;
+      const units = { KB: 1, MB: 1024, GB: 1024 ** 2, TB: 1024 ** 3 };
+      return (Number(match[1]) * units[match[2].toUpperCase()]) / (Number(match[3]) * units[match[4].toUpperCase()]) * 100;
+    }
+
+    function badPorts(server) {
+      const status = server.port_status || {};
+      return Object.entries(status).filter(([, ok]) => !ok).map(([port]) => port);
+    }
+
+    function analyzeServer(server) {
+      const findings = [];
+      if (!server.online) findings.push({ level: "bad", text: `${cleanText(server.name)} 离线`, meta: "状态探测未通过" });
+      const ports = badPorts(server);
+      if (ports.length) findings.push({ level: "bad", text: `${cleanText(server.name)} 端口异常`, meta: `端口 ${ports.join("、")}` });
+      const cpu = percentNumber(server.cpu);
+      const memory = usageRatio(server.memory);
+      const disk = usageRatio(server.disk);
+      if (cpu !== null && cpu >= 85) findings.push({ level: "warn", text: `${cleanText(server.name)} CPU 较高`, meta: `${cpu.toFixed(1)}%` });
+      if (memory !== null && memory >= 85) findings.push({ level: "warn", text: `${cleanText(server.name)} 内存紧张`, meta: `${memory.toFixed(1)}%` });
+      if (disk !== null && disk >= 85) findings.push({ level: "warn", text: `${cleanText(server.name)} 硬盘紧张`, meta: `${disk.toFixed(1)}%` });
+      return findings;
+    }
+
+    function allFindings() { return servers.flatMap(analyzeServer); }
+
+    function formatTime(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "时间未知";
+      return date.toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+    }
+
+    function normalizeTraffic(value) {
+      return cleanText(value).replaceAll("↓", "入 ").replaceAll("↑", "出 ").replace(/\s+/g, " ");
+    }
+
+    function renderServices() {
+      const tile = service => `<a class="service-tile" href="${escapeAttr(service.url)}" target="_blank" rel="noopener"><div class="service-tile-top"><span class="service-symbol ${escapeAttr(service.tone || "")}"><i data-lucide="${escapeAttr(service.icon)}"></i></span><span class="service-arrow"><i data-lucide="arrow-up-right"></i></span></div><div class="service-name">${escapeHtml(service.name)}</div><div class="service-meta">${escapeHtml(service.meta)}</div></a>`;
+      $("#quickServices").innerHTML = SERVICES.filter(item => item.quick).map(tile).join("");
+      $("#allServices").innerHTML = SERVICES.map(tile).join("");
+      refreshIcons();
+    }
+
+    function renderSummary() {
+      const online = servers.filter(server => server.online).length;
+      const total = servers.length;
+      const findings = allFindings();
+      $("#onlineStat").textContent = `${online}/${total}`;
+      $("#onlineNote").textContent = online === total ? "所有机器均在线" : `${total - online} 台机器离线`;
+      $("#alertStat").textContent = String(findings.length);
+      $("#alertNote").textContent = findings.length ? "点击运行信号查看" : "当前没有异常";
+      $("#navFleetCount").textContent = String(total);
+      $("#updatedAt").textContent = formatTime(statusData?.updated_at);
+      const strip = $("#healthStrip");
+      strip.classList.toggle("alert", findings.length > 0);
+      $("#healthTitle").textContent = findings.length ? `发现 ${findings.length} 项需要关注` : "所有关键服务运行正常";
+      $("#healthText").textContent = findings.length ? findings.slice(0, 2).map(item => item.text).join("；") : `已检查 ${total} 台机器与公开端口`;
+
+      const list = sortedServers().slice(0, 6);
+      $("#overviewFleet").innerHTML = list.map(server => `
+        <div class="fleet-row" data-server-name="${escapeAttr(cleanText(server.name))}">
+          <span class="region-code">${escapeHtml(regionCode(server))}</span>
+          <span class="fleet-name">${escapeHtml(cleanText(server.name))}</span>
+          <span class="fleet-role">${escapeHtml(cleanText(server.role))}</span>
+          <span class="fleet-usage">${escapeHtml(cleanText(server.cpu))} CPU</span>
+          <span class="status-label ${server.online ? "" : "offline"}"><span class="status-dot"></span>${server.online ? "在线" : "离线"}</span>
+        </div>`).join("");
+
+      const signals = findings.length ? findings.slice(0, 6) : [
+        { level: "good", text: "状态采集链路正常", meta: "Azure SG 每分钟更新 JSON" },
+        { level: "good", text: "公开端口全部可用", meta: "当前未检测到端口异常" },
+        { level: "good", text: "自动刷新已启用", meta: "控制台将在 30 秒后重新读取" },
+      ];
+      $("#signalCount").textContent = findings.length ? `${findings.length} 项` : "正常";
+      $("#signalList").innerHTML = signals.map(signal => `<div class="signal-item"><span class="signal-mark ${signal.level === "bad" ? "bad" : signal.level === "warn" ? "warn" : ""}"></span><div class="signal-main">${escapeHtml(signal.text)}<div class="signal-meta">${escapeHtml(signal.meta)}</div></div></div>`).join("");
+    }
+
+    function filterServers() {
+      const query = cleanText($("#fleetSearch")?.value || "", "").toLowerCase();
+      return sortedServers().filter(server => {
+        const haystack = [server.name, server.raw_name, server.ip, server.role, server.os].map(value => cleanText(value, "").toLowerCase()).join(" ");
+        const matchText = !query || haystack.includes(query);
+        const joined = haystack;
+        const matchType = currentFilter === "all"
+          || (currentFilter === "online" && server.online)
+          || (currentFilter === "azure" && joined.includes("azure"))
+          || (currentFilter === "proxy" && /reality|auto|代理|node/.test(joined))
+          || (currentFilter === "control" && /控制|管理|bot|marzban|备用/.test(joined));
+        return matchText && matchType;
+      });
+    }
+
+    function renderTable() {
+      const list = filterServers();
+      const table = $("#serverTable");
+      if (!list.length) { table.innerHTML = '<div class="empty-state">没有符合条件的机器。</div>'; return; }
+      table.innerHTML = list.map(server => `
+        <div class="server-table-row" data-server-name="${escapeAttr(cleanText(server.name))}">
+          <div class="server-primary"><span class="region-code">${escapeHtml(regionCode(server))}</span><div class="server-primary-text"><div class="server-title">${escapeHtml(cleanText(server.name))}</div><div class="server-ip">${escapeHtml(cleanText(server.ip))}</div><span class="status-label mobile-status ${server.online ? "" : "offline"}"><span class="status-dot"></span>${server.online ? "在线" : "离线"}</span></div></div>
+          <div class="table-muted">${escapeHtml(cleanText(server.role))}</div>
+          <div class="table-traffic">${escapeHtml(cleanText(server.cpu))}<br>${escapeHtml(cleanText(server.memory))}</div>
+          <div class="table-muted">${escapeHtml(cleanText(server.disk))}</div>
+          <div class="table-traffic">${escapeHtml(normalizeTraffic(server.traffic))}</div>
+          <span class="status-label ${server.online ? "" : "offline"}"><span class="status-dot"></span>${server.online ? "在线" : "离线"}</span>
+          <button class="row-action" title="查看详情"><i data-lucide="chevron-right"></i></button>
+        </div>`).join("");
+      refreshIcons();
+    }
+
+    function tokenizeCommand(command) {
+      const tokens = []; const pattern = /"([^"]*)"|'([^']*)'|(\S+)/g; let match;
+      while ((match = pattern.exec(command))) tokens.push(match[1] ?? match[2] ?? match[3]);
+      return tokens;
+    }
+
+    function makeSshLaunchUrl(command, label) {
+      const tokens = tokenizeCommand(command || "");
+      if (!tokens.length || tokens[0] !== "ssh") return "";
+      const parsed = { user: "", host: "", port: "22", identity: "" };
+      for (let i = 1; i < tokens.length; i++) {
+        const token = tokens[i];
+        if ((token === "-i" || token === "-p") && i + 1 < tokens.length) { parsed[token === "-i" ? "identity" : "port"] = tokens[++i]; continue; }
+        if (token.startsWith("-")) continue;
+        if (!parsed.host) { const at = token.lastIndexOf("@"); parsed.user = at > 0 ? token.slice(0, at) : ""; parsed.host = at > 0 ? token.slice(at + 1) : token; }
+      }
+      if (!parsed.host) return "";
+      const params = new URLSearchParams({ host: parsed.host, port: parsed.port, label: label || parsed.host, command });
+      if (parsed.user) params.set("user", parsed.user);
+      if (parsed.identity) params.set("identity", parsed.identity);
+      return "vpsssh://connect?" + params.toString();
+    }
+
+    function showServer(name) {
+      const server = servers.find(item => cleanText(item.name) === name);
+      if (!server) return;
+      const ssh = SSH_OVERRIDES[name] || cleanText(server.ssh || "", "");
+      const launch = makeSshLaunchUrl(ssh, name);
+      const ports = Object.entries(server.port_status || {});
+      $("#dialogRegion").textContent = regionCode(server);
+      $("#dialogTitle").textContent = cleanText(server.name);
+      $("#dialogIp").textContent = cleanText(server.ip);
+      $("#dialogBody").innerHTML = `
+        <div class="detail-status ${server.online ? "" : "bad"}"><div><div class="detail-status-title">${server.online ? "机器在线" : "机器离线"}</div><div class="detail-status-copy">${ports.length ? ports.map(([port, ok]) => `端口 ${port} ${ok ? "正常" : "异常"}`).join(" · ") : "没有公开端口数据"}</div></div><span class="status-label ${server.online ? "" : "offline"}"><span class="status-dot"></span>${server.online ? "正常" : "异常"}</span></div>
+        <div class="detail-grid">
+          <div class="detail-metric"><div class="detail-label">CPU</div><div class="detail-value">${escapeHtml(cleanText(server.cpu))}</div></div>
+          <div class="detail-metric"><div class="detail-label">内存</div><div class="detail-value">${escapeHtml(cleanText(server.memory))}</div></div>
+          <div class="detail-metric"><div class="detail-label">硬盘</div><div class="detail-value">${escapeHtml(cleanText(server.disk))}</div></div>
+          <div class="detail-metric"><div class="detail-label">运行时间</div><div class="detail-value">${escapeHtml(cleanText(server.uptime))}</div></div>
+          <div class="detail-metric"><div class="detail-label">流量</div><div class="detail-value">${escapeHtml(normalizeTraffic(server.traffic))}</div></div>
+          <div class="detail-metric"><div class="detail-label">数据源</div><div class="detail-value">${escapeHtml(cleanText(server.traffic_source))}</div></div>
+        </div>
+        <div class="detail-section"><div class="detail-section-title">用途与系统</div><div class="detail-code">${escapeHtml(cleanText(server.role))}${server.os ? `<br>${escapeHtml(cleanText(server.os))}` : ""}</div></div>
+        <div class="detail-section"><div class="detail-section-title">SSH 登录命令</div><div class="detail-code">${escapeHtml(ssh || "未配置 SSH 登录")}</div><div class="dialog-actions"><button class="text-btn primary" id="launchSsh" ${launch ? "" : "disabled"}><i data-lucide="square-terminal"></i>一键登录</button><button class="text-btn" id="copySsh" ${ssh ? "" : "disabled"}><i data-lucide="copy"></i>复制命令</button></div></div>`;
+      refreshIcons();
+      $("#launchSsh").onclick = () => { if (launch) window.location.href = launch; };
+      $("#copySsh").onclick = () => copyText(ssh);
+      $("#serverDialog").showModal();
+    }
+
+    async function copyText(value) {
+      try {
+        await navigator.clipboard.writeText(value);
+        showToast("SSH 命令已复制");
+      } catch (error) {
+        window.prompt("请手动复制：", value);
+      }
+    }
+
+    function showToast(message) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function switchView(view) {
+      if (!VIEW_TITLES[view]) return;
+      $$(".view").forEach(item => item.classList.toggle("active", item.dataset.view === view));
+      $$('[data-view-target]').forEach(item => item.classList.toggle("active", item.dataset.viewTarget === view));
+      $("#pageTitle").textContent = VIEW_TITLES[view];
+      $("#mobilePageTitle").textContent = VIEW_TITLES[view];
+      if (view === "fleet") renderTable();
+      history.replaceState(null, "", `#${view}`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function runGlobalSearch(query) {
+      const text = cleanText(query, "").toLowerCase();
+      if (!text) return;
+      const service = SERVICES.find(item => `${item.name} ${item.meta}`.toLowerCase().includes(text));
+      if (service) { window.open(service.url, "_blank", "noopener"); $("#globalSearch").value = ""; return; }
+      const server = servers.find(item => [item.name, item.ip, item.role].map(value => cleanText(value, "").toLowerCase()).join(" ").includes(text));
+      if (server) { showServer(cleanText(server.name)); $("#globalSearch").value = ""; return; }
+      switchView("fleet");
+      $("#fleetSearch").value = query;
+      renderTable();
+    }
+
+    async function loadStatus(manual = false) {
+      const buttons = [$("#refreshButton"), $("#mobileRefreshButton")].filter(Boolean);
+      if (manual) buttons.forEach(button => button.classList.add("spinning"));
+      try {
+        const response = await fetch(`${DATA_URL}?ts=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        if (data.success === false) throw new Error(data.error || "状态源返回失败");
+        statusData = data;
+        servers = getServers(data);
+        renderSummary();
+        renderTable();
+        if (manual) showToast("状态已刷新");
+      } catch (error) {
+        $("#healthStrip").classList.add("alert");
+        $("#healthTitle").textContent = "状态源连接失败";
+        $("#healthText").textContent = error.message;
+        if (manual) showToast("刷新失败");
+      } finally {
+        buttons.forEach(button => button.classList.remove("spinning"));
+      }
+    }
+
+    function bindEvents() {
+      $$('[data-view-target]').forEach(button => button.addEventListener("click", () => switchView(button.dataset.viewTarget)));
+      $("#refreshButton").addEventListener("click", () => loadStatus(true));
+      $("#mobileRefreshButton").addEventListener("click", () => loadStatus(true));
+      $("#closeDialog").addEventListener("click", () => $("#serverDialog").close());
+      $("#serverDialog").addEventListener("click", event => { if (event.target === $("#serverDialog")) $("#serverDialog").close(); });
+      document.addEventListener("click", event => { const row = event.target.closest("[data-server-name]"); if (row) showServer(row.dataset.serverName); });
+      $$(".segment").forEach(button => button.addEventListener("click", () => { currentFilter = button.dataset.filter; $$(".segment").forEach(item => item.classList.toggle("active", item === button)); renderTable(); }));
+      $("#fleetSearch").addEventListener("input", renderTable);
+      $("#globalSearch").addEventListener("keydown", event => { if (event.key === "Enter") runGlobalSearch(event.currentTarget.value); });
+      const initialView = location.hash.slice(1);
+      if (VIEW_TITLES[initialView]) switchView(initialView);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderServices();
+      bindEvents();
+      refreshIcons();
+      loadStatus();
+      setInterval(loadStatus, REFRESH_MS);
+      setTimeout(refreshIcons, 600);
+    });
+  </script>
+</body>
+</html>
