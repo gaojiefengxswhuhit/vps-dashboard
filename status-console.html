@@ -622,9 +622,68 @@
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .mobile-header, .bottom-nav { display: none; }
 
+    .dashboard-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .dashboard-card { min-height: 112px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .dashboard-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 11px; font-weight: 750; }
+    .dashboard-card-head svg { color: var(--blue); }
+    .dashboard-card-value { margin-top: 12px; font-size: 22px; font-weight: 780; line-height: 1.15; }
+    .dashboard-card-note { margin-top: 6px; color: var(--subtle); font-size: 10px; line-height: 1.5; }
+    .daily-grid, .resource-layout, .tools-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); gap: 14px; margin-top: 14px; }
+    .compact-list { display: grid; padding: 3px 14px; }
+    .compact-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 11px 0; border-bottom: 1px solid #edf0f2; }
+    .compact-row:last-child { border-bottom: 0; }
+    .compact-title { font-size: 11px; font-weight: 750; line-height: 1.45; }
+    .compact-meta { margin-top: 3px; color: var(--subtle); font-size: 9px; line-height: 1.45; }
+    .compact-value { color: #344249; font-size: 11px; font-weight: 750; text-align: right; white-space: nowrap; }
+    .positive { color: var(--red); }
+    .negative { color: var(--green); }
+    .cloud-account-grid, .provider-grid { display: grid; gap: 10px; }
+    .cloud-account { padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .cloud-account-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .cloud-account-name { min-width: 0; font-size: 12px; font-weight: 780; overflow-wrap: anywhere; }
+    .cloud-account-number { font-size: 17px; font-weight: 780; white-space: nowrap; }
+    .cloud-account-meta { margin-top: 4px; color: var(--subtle); font-size: 9px; }
+    .cloud-account-nodes { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+    .provider-card { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    .provider-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 6px; color: var(--blue); background: var(--blue-soft); }
+    .provider-name { font-size: 11px; font-weight: 780; }
+    .provider-meta { margin-top: 3px; color: var(--subtle); font-size: 9px; line-height: 1.4; }
+    .tool-form { display: grid; gap: 10px; padding: 14px; }
+    .field-label { display: grid; gap: 5px; color: var(--muted); font-size: 10px; font-weight: 700; }
+    .field-input, .field-select { width: 100%; height: 38px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 6px; color: var(--text); background: var(--surface); outline: 0; font-size: 12px; }
+    .field-input:focus, .field-select:focus { border-color: #8ea9e8; box-shadow: 0 0 0 3px rgba(40,100,220,.08); }
+    .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .file-picker { min-height: 78px; display: grid; place-items: center; padding: 12px; border: 1px dashed var(--line-strong); border-radius: 6px; background: var(--surface-soft); color: var(--muted); text-align: center; font-size: 10px; cursor: pointer; }
+    .file-picker input { max-width: 100%; margin-top: 7px; font-size: 10px; }
+    .tool-list { display: grid; }
+    .tool-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid #edf0f2; }
+    .tool-row:last-child { border-bottom: 0; }
+    .tool-name { font-size: 11px; font-weight: 750; overflow-wrap: anywhere; }
+    .tool-meta { margin-top: 3px; color: var(--subtle); font-size: 9px; line-height: 1.45; }
+    .tool-actions { display: flex; gap: 5px; }
+    .upload-progress { height: 6px; overflow: hidden; border-radius: 999px; background: var(--surface-strong); }
+    .upload-progress > span { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--blue); transition: width .15s ease; }
+    .architecture-map { position: relative; min-height: 560px; display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); grid-template-rows: repeat(3, minmax(120px, auto)); gap: 28px 34px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+    .architecture-lines { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
+    .architecture-lines path { fill: none; stroke: var(--green); stroke-width: 2; opacity: .72; }
+    .architecture-lines path.bad { stroke: var(--red); stroke-width: 2.5; opacity: .95; }
+    .arch-node { position: relative; z-index: 1; min-width: 0; align-self: center; padding: 13px; border: 1px solid #b9d9c6; border-left: 4px solid var(--green); border-radius: 7px; background: var(--surface); box-shadow: 0 5px 18px rgba(21,33,38,.07); }
+    .arch-node.bad { border-color: #e8b7bd; border-left-color: var(--red); background: #fffafb; }
+    .arch-node-head { display: flex; align-items: center; gap: 8px; }
+    .arch-node-head svg { color: var(--blue); }
+    .arch-node-title { min-width: 0; font-size: 12px; font-weight: 780; }
+    .arch-node-copy { margin-top: 7px; color: var(--muted); font-size: 9px; line-height: 1.55; }
+    .arch-node-state { margin-top: 8px; display: inline-flex; align-items: center; gap: 5px; color: var(--green); font-size: 9px; font-weight: 750; }
+    .arch-node.bad .arch-node-state { color: var(--red); }
+    .architecture-legend { display: flex; gap: 16px; margin-bottom: 12px; color: var(--muted); font-size: 10px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-line { width: 24px; height: 2px; background: var(--green); }
+    .legend-line.bad { background: var(--red); }
+
     @media (max-width: 1080px) {
       :root { --sidebar: 206px; }
       .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .quick-grid, .service-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .server-table-head, .server-table-row { grid-template-columns: minmax(170px, 1.2fr) minmax(110px, .7fr) 90px 110px 92px 40px; }
       .server-table-head > :nth-child(5), .server-table-row > :nth-child(5) { display: none; }
@@ -692,6 +751,9 @@
       .control-summary { grid-template-columns: 1fr; gap: 8px; }
       .control-summary-item { min-height: 72px; }
       .control-grid { grid-template-columns: 1fr; gap: 10px; }
+      .daily-grid, .resource-layout, .tools-layout { grid-template-columns: 1fr; gap: 10px; }
+      .architecture-map { min-height: 760px; grid-template-columns: 1fr; grid-template-rows: none; gap: 18px; padding: 18px 16px; }
+      .arch-node { grid-column: 1 !important; grid-row: auto !important; }
       .maintenance-grid { grid-template-columns: 1fr; }
       .service-control-row { grid-template-columns: minmax(0, 1fr) auto; }
       .service-control-row > :nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
@@ -709,7 +771,7 @@
         inset: auto 0 0;
         height: calc(62px + env(safe-area-inset-bottom));
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         padding: 4px 6px env(safe-area-inset-bottom);
         border-top: 1px solid var(--line);
         background: rgba(255,255,255,.97);
@@ -736,6 +798,12 @@
       .stat-card { min-height: 94px; }
       .stat-note { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .quick-grid, .service-grid { grid-template-columns: 1fr 1fr; }
+      .dashboard-grid { grid-template-columns: 1fr 1fr; }
+      .dashboard-card { min-height: 98px; padding: 12px; }
+      .dashboard-card-value { font-size: 18px; }
+      .form-row { grid-template-columns: 1fr; }
+      .tool-row { grid-template-columns: 1fr; }
+      .tool-actions .mini-btn { flex: 1; }
       .service-name { font-size: 12px; }
       .detail-grid { grid-template-columns: 1fr; }
     }
@@ -751,8 +819,11 @@
       <nav class="nav" aria-label="主导航">
         <div class="nav-label">工作区</div>
         <button class="nav-link active" data-view-target="overview"><i data-lucide="layout-dashboard"></i><span>总览</span></button>
+        <button class="nav-link" data-view-target="today"><i data-lucide="sunrise"></i><span>今日</span></button>
+        <button class="nav-link" data-view-target="resources"><i data-lucide="wallet-cards"></i><span>云账单</span></button>
         <button class="nav-link" data-view-target="services"><i data-lucide="panels-top-left"></i><span>服务入口</span><span class="nav-count">8</span></button>
         <button class="nav-link" data-view-target="fleet"><i data-lucide="server"></i><span>机器</span><span class="nav-count" id="navFleetCount">--</span></button>
+        <button class="nav-link" data-view-target="tools"><i data-lucide="package-open"></i><span>工具</span></button>
         <button class="nav-link" data-view-target="control"><i data-lucide="sliders-horizontal"></i><span>控制</span></button>
         <button class="nav-link" data-view-target="architecture"><i data-lucide="workflow"></i><span>架构</span></button>
       </nav>
@@ -814,13 +885,88 @@
           </section>
 
           <section class="section-block">
-            <div class="section-head"><div><h2>运行结构</h2><p>入口、控制中枢和执行节点各自承担清晰职责</p></div></div>
+            <div class="section-head"><div><h2>运行结构</h2><p>入口、控制中枢和执行节点各自承担清晰职责</p></div><button class="section-link" data-view-target="architecture">查看动态关系图</button></div>
             <div class="platform-grid">
               <article class="platform-col"><div class="platform-number">01 / EDGE</div><div class="platform-name">Cloudflare 边缘入口</div><div class="platform-desc">域名、HTTPS、反向代理，以及 Pages、Workers 和 R2 服务。</div><div class="platform-tags"><span class="mini-tag">DNS</span><span class="mini-tag">Pages</span><span class="mini-tag">Workers</span><span class="mini-tag">R2</span></div></article>
               <article class="platform-col"><div class="platform-number">02 / CONTROL</div><div class="platform-name">Azure SG 控制中枢</div><div class="platform-desc">状态采集、Caddy、Marzban、OpenList、机器人和自动化任务。</div><div class="platform-tags"><span class="mini-tag">Caddy</span><span class="mini-tag">Marzban</span><span class="mini-tag">Bot</span><span class="mini-tag">Watchdog</span></div></article>
               <article class="platform-col"><div class="platform-number">03 / FLEET</div><div class="platform-name">多云执行节点</div><div class="platform-desc">Azure、GCP、Oracle 与 NAT 节点承载代理和区域化服务。</div><div class="platform-tags"><span class="mini-tag">Azure</span><span class="mini-tag">GCP</span><span class="mini-tag">Oracle</span><span class="mini-tag">NAT VPS</span></div></article>
             </div>
           </section>
+        </section>
+
+        <section class="view" data-view="today">
+          <div class="section-head"><div><h2>每日个人驾驶舱</h2><p>天气、日程、基金与系统健康汇成一页</p></div><button class="section-link" data-control-action="refresh_daily" type="button">刷新今日数据</button></div>
+          <div class="control-locked private-locked" id="todayLocked">
+            <div><span class="lock-symbol"><i data-lucide="lock-keyhole"></i></span><h3>今日数据已锁定</h3><p>日程、基金和账户流量属于私有数据，登录控制台后显示。</p><a class="text-btn primary" href="/control-api/auth"><i data-lucide="unlock-keyhole"></i>登录并查看</a></div>
+          </div>
+          <div class="hidden private-workspace" id="todayWorkspace">
+            <div class="dashboard-grid">
+              <article class="dashboard-card"><div class="dashboard-card-head"><span>哈尔滨天气</span><i data-lucide="cloud-sun"></i></div><div class="dashboard-card-value" id="todayWeather">--</div><div class="dashboard-card-note" id="todayWeatherNote">等待天气数据</div></article>
+              <article class="dashboard-card"><div class="dashboard-card-head"><span>今日日程</span><i data-lucide="calendar-days"></i></div><div class="dashboard-card-value" id="todayReminderCount">--</div><div class="dashboard-card-note" id="todayReminderNote">等待收藏提醒</div></article>
+              <article class="dashboard-card"><div class="dashboard-card-head"><span>基金净值日盈亏</span><i data-lucide="chart-no-axes-combined"></i></div><div class="dashboard-card-value" id="todayFundPnl">--</div><div class="dashboard-card-note" id="todayFundNote">等待基金缓存</div></article>
+              <article class="dashboard-card"><div class="dashboard-card-head"><span>云端健康</span><i data-lucide="activity"></i></div><div class="dashboard-card-value" id="todayFleet">--</div><div class="dashboard-card-note" id="todayFleetNote">等待服务状态</div></article>
+            </div>
+            <div class="daily-grid">
+              <div>
+                <section class="panel"><div class="panel-head"><div><div class="panel-title">今日日程与待办</div><div class="panel-subtitle">来自收藏智能提醒</div></div></div><div class="compact-list" id="todayReminderList"></div></section>
+                <section class="panel section-block"><div class="panel-head"><div><div class="panel-title">持仓基金</div><div class="panel-subtitle">最新净值与更新状态</div></div></div><div class="compact-list" id="todayFundList"></div></section>
+              </div>
+              <div>
+                <section class="panel"><div class="panel-head"><div><div class="panel-title">系统摘要</div><div class="panel-subtitle">机器、服务与 Azure 流量</div></div></div><div class="compact-list" id="todaySystemList"></div></section>
+                <section class="panel section-block"><div class="panel-head"><div><div class="panel-title">即将到来</div><div class="panel-subtitle">后续提醒</div></div></div><div class="compact-list" id="upcomingReminderList"></div></section>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view="resources">
+          <div class="section-head"><div><h2>云资源账单</h2><p>Azure 使用精确账户缓存，其余云厂商先展示资源与授权状态</p></div><button class="section-link" data-control-action="refresh_cloud" type="button">刷新 Azure 用量</button></div>
+          <div class="control-locked private-locked" id="resourcesLocked">
+            <div><span class="lock-symbol"><i data-lucide="lock-keyhole"></i></span><h3>云账单已锁定</h3><p>账号流量和资源明细仅在控制台验证后显示。</p><a class="text-btn primary" href="/control-api/auth"><i data-lucide="unlock-keyhole"></i>登录并查看</a></div>
+          </div>
+          <div class="hidden private-workspace" id="resourcesWorkspace">
+            <div class="dashboard-grid">
+              <article class="dashboard-card"><div class="dashboard-card-head"><span>Azure 账号</span><i data-lucide="cloud"></i></div><div class="dashboard-card-value" id="cloudAccountCount">--</div><div class="dashboard-card-note" id="cloudMonth">当前自然月</div></article>
+              <article class="dashboard-card"><div class="dashboard-card-head"><span>本月出站</span><i data-lucide="arrow-up-from-line"></i></div><div class="dashboard-card-value" id="cloudTotalOut">--</div><div class="dashboard-card-note">三个账号分别计费，不做切换合并</div></article>
+              <article class="dashboard-card"><div class="dashboard-card-head"><span>剩余额度</span><i data-lucide="gauge"></i></div><div class="dashboard-card-value" id="cloudRemaining">--</div><div class="dashboard-card-note">按每账号 100 GB 显示</div></article>
+              <article class="dashboard-card"><div class="dashboard-card-head"><span>缓存时间</span><i data-lucide="database-zap"></i></div><div class="dashboard-card-value" id="cloudCachedAt">--</div><div class="dashboard-card-note">平时读取缓存，手动刷新才请求 Azure</div></article>
+            </div>
+            <div class="resource-layout">
+              <section><div class="section-head"><div><h2>Azure 出站额度</h2><p>Monitor 与账单口径同时保留</p></div></div><div class="cloud-account-grid" id="cloudAccountList"></div></section>
+              <section><div class="section-head"><div><h2>云厂商接入</h2><p>资源状态与账单授权分开显示</p></div></div><div class="provider-grid" id="providerList"></div></section>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view="tools">
+          <div class="section-head"><div><h2>个人工具</h2><p>限时文件投递和统一消息入口</p></div><button class="section-link" id="reloadTools" type="button">刷新工具状态</button></div>
+          <div class="control-locked private-locked" id="toolsLocked">
+            <div><span class="lock-symbol"><i data-lucide="lock-keyhole"></i></span><h3>工具已锁定</h3><p>创建链接与管理 Webhook 需要控制台验证；对方下载链接和外部事件入口无需登录。</p><a class="text-btn primary" href="/control-api/auth"><i data-lucide="unlock-keyhole"></i>登录并使用</a></div>
+          </div>
+          <div class="hidden private-workspace" id="toolsWorkspace">
+            <div class="tools-layout">
+              <div>
+                <section class="panel">
+                  <div class="panel-head"><div><div class="panel-title">一次性文件投递</div><div class="panel-subtitle" id="dropDiskNote">限时、限次、耗尽即删除</div></div></div>
+                  <form class="tool-form" id="dropForm">
+                    <label class="file-picker"><span>选择要投递的文件，最大 2 GB</span><input id="dropFile" type="file" required /></label>
+                    <div class="form-row"><label class="field-label">有效期<select class="field-select" id="dropHours"><option value="1">1 小时</option><option value="6">6 小时</option><option value="24" selected>24 小时</option><option value="72">3 天</option><option value="168">7 天</option></select></label><label class="field-label">最多下载次数<input class="field-input" id="dropDownloads" type="number" min="1" max="20" value="1" /></label></div>
+                    <div class="upload-progress hidden" id="dropProgress"><span></span></div>
+                    <button class="text-btn primary" id="dropSubmit" type="submit"><i data-lucide="upload"></i>生成投递链接</button>
+                  </form>
+                  <div class="tool-list" id="dropFileList"></div>
+                </section>
+              </div>
+              <div>
+                <section class="panel">
+                  <div class="panel-head"><div><div class="panel-title">个人 Webhook 中心</div><div class="panel-subtitle">GitHub、Discord、邮箱等事件转微信</div></div></div>
+                  <form class="tool-form" id="webhookForm"><div class="form-row"><label class="field-label">名称<input class="field-input" id="webhookName" maxlength="40" placeholder="例如：项目通知" required /></label><label class="field-label">来源<select class="field-select" id="webhookSource"><option value="github">GitHub</option><option value="discord">Discord</option><option value="email">邮箱</option><option value="general">通用 JSON</option></select></label></div><button class="text-btn primary" type="submit"><i data-lucide="webhook"></i>创建微信入口</button></form>
+                  <div class="tool-list" id="webhookList"></div>
+                </section>
+                <section class="panel section-block"><div class="panel-head"><div><div class="panel-title">最近转发</div><div class="panel-subtitle">仅保存摘要和结果</div></div></div><div class="tool-list" id="webhookEventList"></div></section>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section class="view" data-view="services">
@@ -922,13 +1068,9 @@
         </section>
 
         <section class="view" data-view="architecture">
-          <div class="section-head"><div><h2>服务架构</h2><p>从代码发布、域名入口到控制中枢和执行节点</p></div></div>
-          <div class="architecture">
-            <article class="architecture-node"><span class="architecture-icon"><i data-lucide="git-branch"></i></span><div class="architecture-title">代码与配置</div><div class="architecture-copy">GitHub 保存网页、机器人和运维脚本，变更经过留档后上线。</div><div class="architecture-items"><div class="architecture-item">blog-gaojiefeng</div><div class="architecture-item">vps-dashboard</div><div class="architecture-item">私有服务备份</div></div></article>
-            <article class="architecture-node"><span class="architecture-icon"><i data-lucide="cloud"></i></span><div class="architecture-title">Cloudflare</div><div class="architecture-copy">统一处理域名、TLS 与边缘服务，并代理到 Azure SG 源站。</div><div class="architecture-items"><div class="architecture-item">Pages：博客</div><div class="architecture-item">Workers：文件 / 邮箱 / 订阅</div><div class="architecture-item">Proxy：状态与管理入口</div></div></article>
-            <article class="architecture-node"><span class="architecture-icon"><i data-lucide="command"></i></span><div class="architecture-title">Azure SG</div><div class="architecture-copy">系统控制面：采集状态、托管面板、机器人、自动切换和故障自愈。</div><div class="architecture-items"><div class="architecture-item">Caddy + 状态 JSON</div><div class="architecture-item">Marzban + OpenList + 2FA</div><div class="architecture-item">Telegram / 微信 Bot</div></div></article>
-            <article class="architecture-node"><span class="architecture-icon"><i data-lucide="network"></i></span><div class="architecture-title">多云节点</div><div class="architecture-copy">Azure、GCP、Oracle 和 NAT VPS 提供区域节点，接受统一监控与订阅管理。</div><div class="architecture-items"><div class="architecture-item">Japan Auto 后端</div><div class="architecture-item">欧美与亚洲节点</div><div class="architecture-item">SSH / 端口 / Azure Monitor</div></div></article>
-          </div>
+          <div class="section-head"><div><h2>云服务关系图 2.0</h2><p>连接线会跟随机器和服务健康状态变色</p></div><button class="section-link" data-control-action="watchdog_scan" type="button">重新检测服务</button></div>
+          <div class="architecture-legend"><span class="legend-item"><span class="legend-line"></span>链路正常</span><span class="legend-item"><span class="legend-line bad"></span>端点异常</span></div>
+          <div class="architecture-map" id="architectureMap"><svg class="architecture-lines" id="architectureLines" aria-hidden="true"></svg></div>
 
           <section class="section-block">
             <div class="section-head"><div><h2>数据链路</h2><p>状态页不依赖哪吒 Agent</p></div></div>
@@ -945,10 +1087,11 @@
 
   <nav class="bottom-nav" aria-label="手机导航">
     <button class="bottom-link active" data-view-target="overview"><i data-lucide="layout-dashboard"></i><span>总览</span></button>
-    <button class="bottom-link" data-view-target="services"><i data-lucide="panels-top-left"></i><span>服务</span></button>
+    <button class="bottom-link" data-view-target="today"><i data-lucide="sunrise"></i><span>今日</span></button>
+    <button class="bottom-link" data-view-target="resources"><i data-lucide="wallet-cards"></i><span>账单</span></button>
     <button class="bottom-link" data-view-target="fleet"><i data-lucide="server"></i><span>机器</span></button>
+    <button class="bottom-link" data-view-target="tools"><i data-lucide="package-open"></i><span>工具</span></button>
     <button class="bottom-link" data-view-target="control"><i data-lucide="sliders-horizontal"></i><span>控制</span></button>
-    <button class="bottom-link" data-view-target="architecture"><i data-lucide="workflow"></i><span>架构</span></button>
   </nav>
 
   <dialog class="detail-dialog" id="serverDialog">
@@ -970,6 +1113,7 @@
   <script>
     const DATA_URL = "./vps-status.json";
     const CONTROL_API = "/control-api";
+    const TOOLS_API = "/tool-api";
     const REFRESH_MS = 30000;
     const SSH_OVERRIDES = {
       "JP NAT": 'ssh -i "D:\\Download\\xushuo_key.pem" root@154.36.187.99 -p 10475',
@@ -990,12 +1134,13 @@
       [/KR|Korea|韩国/i, "KR"], [/London|United Kingdom|英国|Oracle/i, "GB"], [/(^|\s)DE(\s|$)|Germany|德国/i, "DE"],
       [/US|Dallas|Iowa|United States|美国/i, "US"],
     ];
-    const VIEW_TITLES = { overview: "运行总览", services: "服务入口", fleet: "机器", control: "控制中心", architecture: "服务架构" };
+    const VIEW_TITLES = { overview: "运行总览", today: "每日驾驶舱", resources: "云资源账单", services: "服务入口", fleet: "机器", tools: "个人工具", control: "控制中心", architecture: "服务架构" };
     let statusData = null;
     let servers = [];
     let currentFilter = "all";
     let controlData = null;
     let controlLoading = false;
+    let toolsLoading = false;
     let toastTimer = null;
 
     const $ = selector => document.querySelector(selector);
@@ -1114,6 +1259,7 @@
       ];
       $("#signalCount").textContent = findings.length ? `${findings.length} 项` : "正常";
       $("#signalList").innerHTML = signals.map(signal => `<div class="signal-item"><span class="signal-mark ${signal.level === "bad" ? "bad" : signal.level === "warn" ? "warn" : ""}"></span><div class="signal-main">${escapeHtml(signal.text)}<div class="signal-meta">${escapeHtml(signal.meta)}</div></div></div>`).join("");
+      renderArchitecture();
     }
 
     function filterServers() {
@@ -1225,13 +1371,201 @@
       const bytes = Number(value) || 0;
       if (bytes < 1024) return `${bytes} B`;
       if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-      return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+      if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+      return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`;
+    }
+
+    function signedMoney(value) {
+      const number = Number(value) || 0;
+      return `${number >= 0 ? "+" : ""}${number.toLocaleString("zh-CN", { maximumFractionDigits: 2 })} 元`;
+    }
+
+    function toneClass(value) {
+      return Number(value) >= 0 ? "positive" : "negative";
+    }
+
+    function unlockPrivateViews(unlocked) {
+      $$(".private-locked").forEach(item => item.classList.toggle("hidden", unlocked));
+      $$(".private-workspace").forEach(item => item.classList.toggle("hidden", !unlocked));
+    }
+
+    function renderDaily(data) {
+      const weather = data?.weather || {};
+      const reminders = data?.reminders || {};
+      const funds = data?.funds || {};
+      const fleet = data?.fleet || {};
+      const services = data?.services || {};
+      const cloud = data?.cloud || {};
+      $("#todayWeather").textContent = weather.temperature == null ? "暂不可用" : `${Math.round(Number(weather.temperature))}°C · ${cleanText(weather.condition, "--")}`;
+      $("#todayWeatherNote").textContent = weather.low == null || weather.high == null ? cleanText(weather.error, "等待天气数据") : `${Math.round(Number(weather.low))}~${Math.round(Number(weather.high))}°C · 降水 ${weather.rain_probability ?? "--"}%`;
+      $("#todayReminderCount").textContent = `${(reminders.today || []).length} 项`;
+      $("#todayReminderNote").textContent = (reminders.today || []).length ? `下一项 ${(reminders.today || [])[0]?.time || "--"}` : "今天暂无提醒";
+      $("#todayFundPnl").textContent = signedMoney(funds.daily_pnl);
+      $("#todayFundPnl").className = `dashboard-card-value ${toneClass(funds.daily_pnl)}`;
+      $("#todayFundNote").textContent = `净值更新 ${funds.updated || 0}/${funds.total || 0} · 总盈亏 ${signedMoney(funds.hold_pnl)}`;
+      $("#todayFleet").textContent = `${fleet.online ?? "--"}/${fleet.total ?? "--"} 在线`;
+      $("#todayFleetNote").textContent = `${services.healthy ?? "--"}/${services.total ?? "--"} 服务健康`;
+
+      const reminderRow = item => `<div class="compact-row"><div><div class="compact-title">${escapeHtml(item.text)}</div><div class="compact-meta">收藏智能提醒</div></div><div class="compact-value">${escapeHtml(item.time || item.date || "--")}</div></div>`;
+      $("#todayReminderList").innerHTML = (reminders.today || []).map(reminderRow).join("") || '<div class="empty-state">今天暂无日程或待办。</div>';
+      $("#upcomingReminderList").innerHTML = (reminders.upcoming || []).map(item => `<div class="compact-row"><div><div class="compact-title">${escapeHtml(item.text)}</div><div class="compact-meta">${escapeHtml(item.date || "--")}</div></div><div class="compact-value">${escapeHtml(item.time || "--")}</div></div>`).join("") || '<div class="empty-state">没有即将到来的提醒。</div>';
+      $("#todayFundList").innerHTML = (funds.items || []).map(item => `<div class="compact-row"><div><div class="compact-title">${escapeHtml(item.name)}</div><div class="compact-meta">${escapeHtml(item.code)} · ${item.updated_today ? "今日已更新" : `净值日 ${escapeHtml(item.nav_date || "--")}`}</div></div><div class="compact-value ${toneClass(item.daily_pnl)}">${signedMoney(item.daily_pnl)}<div class="compact-meta">总 ${signedMoney(item.hold_pnl)}</div></div></div>`).join("") || '<div class="empty-state">基金缓存暂不可用。</div>';
+      $("#todaySystemList").innerHTML = [
+        ["VPS", `${fleet.online ?? "--"}/${fleet.total ?? "--"} 在线`, (fleet.offline || []).length ? `离线：${(fleet.offline || []).join("、")}` : "没有离线机器"],
+        ["核心服务", `${services.healthy ?? "--"}/${services.total ?? "--"} 健康`, `最近检查 ${compactTime(services.checked_at)}`],
+        ["Azure 出站", `${Number(cloud.used_gb || 0).toFixed(1)} GB`, `总额度 ${Number(cloud.quota_gb || 0).toFixed(0)} GB`],
+      ].map(item => `<div class="compact-row"><div><div class="compact-title">${escapeHtml(item[0])}</div><div class="compact-meta">${escapeHtml(item[2])}</div></div><div class="compact-value">${escapeHtml(item[1])}</div></div>`).join("");
+    }
+
+    function renderCloud(data) {
+      const accounts = data?.accounts || [];
+      const totalOut = accounts.reduce((sum, item) => sum + Number(item.out_gb || 0), 0);
+      const remaining = accounts.reduce((sum, item) => sum + Number(item.remaining_gb || 0), 0);
+      $("#cloudAccountCount").textContent = `${accounts.length} 个`;
+      $("#cloudMonth").textContent = `${data?.month || "当前自然月"} · 各账号单独计算`;
+      $("#cloudTotalOut").textContent = `${totalOut.toFixed(1)} GB`;
+      $("#cloudRemaining").textContent = `${remaining.toFixed(1)} GB`;
+      $("#cloudCachedAt").textContent = compactTime(data?.cached_at);
+      $("#cloudAccountList").innerHTML = accounts.map(item => {
+        const width = Math.max(0, Math.min(100, Number(item.percent) || 0));
+        const tone = width >= 80 ? "bad" : width >= 65 ? "warn" : "";
+        const nodes = (item.nodes || []).map(node => `<span class="mini-tag">${escapeHtml(node.name)} · 出 ${Number(node.out_gb || 0).toFixed(1)}G</span>`).join("");
+        return `<article class="cloud-account"><div class="cloud-account-top"><div><div class="cloud-account-name">${escapeHtml(item.label)}</div><div class="cloud-account-meta">Monitor ${Number(item.monitor_out_gb || 0).toFixed(2)} GB · 账单 ${Number(item.billing_out_gb || 0).toFixed(2)} GB</div></div><div class="cloud-account-number">${Number(item.out_gb || 0).toFixed(1)} / ${Number(item.quota_gb || 0).toFixed(0)} GB</div></div><div class="usage-track"><div class="usage-fill ${tone}" style="width:${width}%"></div></div><div class="cloud-account-nodes">${nodes || '<span class="mini-tag">暂无节点明细</span>'}</div></article>`;
+      }).join("") || '<div class="empty-state">Azure 缓存暂不可用。</div>';
+      $("#providerList").innerHTML = (data?.providers || []).map(provider => `<article class="provider-card"><span class="provider-icon"><i data-lucide="${provider.id === "azure" ? "cloud" : provider.id === "cloudflare" ? "cloud-cog" : "server"}"></i></span><div><div class="provider-name">${escapeHtml(provider.label)}</div><div class="provider-meta">${provider.resource_count || 0} 项资源 · ${provider.billing_connected ? "账单已接入" : "账单未授权"}</div></div><span class="state-chip ${provider.billing_connected ? "" : "bad"}">${provider.billing_connected ? "已连接" : "待接入"}</span></article>`).join("");
+      refreshIcons();
+    }
+
+    const ARCH_EDGES = [["github", "cloudflare"], ["cloudflare", "sg"], ["sg", "web"], ["sg", "bots"], ["sg", "auto"], ["auto", "fleet"], ["sg", "fleet"]];
+
+    function renderArchitecture() {
+      const map = $("#architectureMap");
+      if (!map) return;
+      const sg = servers.find(item => cleanText(item.name, "").toLowerCase() === "azure sg");
+      const services = controlData?.services || [];
+      const serviceOk = unit => { const item = services.find(row => row.unit === unit); return item ? Boolean(item.active && item.healthy) : Boolean(sg?.online); };
+      const fleetOk = servers.length ? servers.every(item => item.online) : true;
+      const nodes = [
+        { id: "github", title: "GitHub", icon: "git-branch", copy: "网页、Bot 与运维脚本留档", ok: true, col: 1, row: 1 },
+        { id: "cloudflare", title: "Cloudflare", icon: "cloud", copy: "DNS、TLS、Pages、Workers 与 R2", ok: true, col: 2, row: 1 },
+        { id: "sg", title: "Azure SG 控制中枢", icon: "command", copy: "Caddy、状态采集、自动任务与 API", ok: Boolean(sg?.online), col: 3, row: 1 },
+        { id: "bots", title: "消息与自动化", icon: "messages-square", copy: "Telegram、微信、邮件与 Webhook", ok: serviceOk("weixin-bridge.service") && serviceOk("tg-node-bot.service"), col: 4, row: 1 },
+        { id: "web", title: "管理服务", icon: "panels-top-left", copy: "Marzban、OpenList、2FA 与状态页", ok: serviceOk("openlist.service") && serviceOk("marzban-node.service"), col: 3, row: 2 },
+        { id: "auto", title: "Japan Auto", icon: "shuffle", copy: "按流量、优先级和健康切换后端", ok: serviceOk("jp-auto-switcher.service"), col: 4, row: 2 },
+        { id: "fleet", title: "多云 VPS", icon: "network", copy: `${servers.filter(item => item.online).length}/${servers.length || "--"} 在线 · Azure / GCP / Oracle / NAT`, ok: fleetOk, col: 4, row: 3 },
+      ];
+      map.querySelectorAll(".arch-node").forEach(item => item.remove());
+      nodes.forEach(node => map.insertAdjacentHTML("beforeend", `<article class="arch-node ${node.ok ? "" : "bad"}" data-arch-node="${node.id}" data-arch-ok="${node.ok ? "1" : "0"}" style="grid-column:${node.col};grid-row:${node.row}"><div class="arch-node-head"><i data-lucide="${node.icon}"></i><div class="arch-node-title">${escapeHtml(node.title)}</div></div><div class="arch-node-copy">${escapeHtml(node.copy)}</div><div class="arch-node-state"><span class="status-dot"></span>${node.ok ? "正常" : "异常"}</div></article>`));
+      refreshIcons();
+      window.requestAnimationFrame(drawArchitectureLines);
+    }
+
+    function drawArchitectureLines() {
+      const map = $("#architectureMap");
+      const svg = $("#architectureLines");
+      if (!map || !svg || map.offsetWidth === 0) return;
+      const root = map.getBoundingClientRect();
+      svg.setAttribute("viewBox", `0 0 ${root.width} ${root.height}`);
+      svg.innerHTML = ARCH_EDGES.map(([from, to]) => {
+        const a = map.querySelector(`[data-arch-node="${from}"]`);
+        const b = map.querySelector(`[data-arch-node="${to}"]`);
+        if (!a || !b) return "";
+        const ar = a.getBoundingClientRect(), br = b.getBoundingClientRect();
+        const x1 = ar.left - root.left + ar.width / 2, y1 = ar.top - root.top + ar.height / 2;
+        const x2 = br.left - root.left + br.width / 2, y2 = br.top - root.top + br.height / 2;
+        const vertical = Math.abs(y2 - y1) > Math.abs(x2 - x1);
+        const c1x = vertical ? x1 : x1 + (x2 - x1) / 2, c1y = vertical ? y1 + (y2 - y1) / 2 : y1;
+        const c2x = vertical ? x2 : x1 + (x2 - x1) / 2, c2y = vertical ? y1 + (y2 - y1) / 2 : y2;
+        const bad = a.dataset.archOk !== "1" || b.dataset.archOk !== "1";
+        return `<path class="${bad ? "bad" : ""}" d="M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}"/>`;
+      }).join("");
+    }
+
+    function renderTools(data) {
+      const drop = data?.drop || {};
+      const webhooks = data?.webhooks || {};
+      $("#toolsLocked").classList.add("hidden");
+      $("#toolsWorkspace").classList.remove("hidden");
+      $("#dropDiskNote").textContent = `剩余 ${formatFileSize(drop.disk_free)} · 单文件最大 ${formatFileSize(drop.max_upload)}`;
+      $("#dropFileList").innerHTML = (drop.files || []).filter(item => item.status === "active").map(item => `<div class="tool-row"><div><div class="tool-name">${escapeHtml(item.name)}</div><div class="tool-meta">${formatFileSize(item.size)} · 下载 ${item.downloads}/${item.max_downloads} · 到期 ${escapeHtml(compactTime(item.expires_at))}</div></div><div class="tool-actions"><button class="mini-btn" data-copy-value="${escapeAttr(item.url)}" type="button"><i data-lucide="copy"></i>链接</button><button class="mini-btn" data-delete-drop="${item.id}" type="button"><i data-lucide="trash-2"></i>删除</button></div></div>`).join("") || '<div class="empty-state">还没有创建投递链接。</div>';
+      const sourceNames = { github: "GitHub", discord: "Discord", email: "邮箱", general: "通用" };
+      $("#webhookList").innerHTML = (webhooks.endpoints || []).map(item => `<div class="tool-row"><div><div class="tool-name">${escapeHtml(item.name)}</div><div class="tool-meta">${escapeHtml(sourceNames[item.source] || item.source)} · ${item.hits} 次 · ${item.last_at ? `最近 ${escapeHtml(compactTime(item.last_at))}` : "尚未触发"}</div></div><div class="tool-actions"><button class="mini-btn" data-copy-value="${escapeAttr(item.url)}" type="button"><i data-lucide="copy"></i>地址</button><button class="mini-btn" data-test-hook="${item.id}" type="button"><i data-lucide="send"></i>测试</button><button class="mini-btn" data-delete-hook="${item.id}" type="button"><i data-lucide="trash-2"></i></button></div></div>`).join("") || '<div class="empty-state">还没有 Webhook。</div>';
+      $("#webhookEventList").innerHTML = (webhooks.events || []).map(item => `<div class="tool-row"><div><div class="tool-name">${item.delivered ? "已转发" : "转发失败"} · ${escapeHtml(item.title)}</div><div class="tool-meta">${escapeHtml(compactTime(item.received_at))} · ${escapeHtml(item.preview || item.detail || "")}</div></div><span class="state-chip ${item.delivered ? "" : "bad"}">${item.delivered ? "成功" : "失败"}</span></div>`).join("") || '<div class="empty-state">尚未收到外部事件。</div>';
+      refreshIcons();
+    }
+
+    async function loadToolsStatus(silent = false) {
+      if (toolsLoading) return;
+      toolsLoading = true;
+      try {
+        const response = await fetch(`${TOOLS_API}/status?ts=${Date.now()}`, { cache: "no-store", credentials: "same-origin" });
+        if (response.status === 401) {
+          $("#toolsLocked").classList.remove("hidden");
+          $("#toolsWorkspace").classList.add("hidden");
+          return;
+        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        renderTools(await response.json());
+        if (!silent) showToast("工具状态已刷新");
+      } catch (error) {
+        if (!silent) showToast(`工具状态读取失败：${error.message}`);
+      } finally {
+        toolsLoading = false;
+      }
+    }
+
+    async function toolsPost(path, payload) {
+      const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      if (response.status === 401) { window.location.href = `${CONTROL_API}/auth`; throw new Error("需要登录"); }
+      const result = await response.json().catch(() => ({ message: `HTTP ${response.status}` }));
+      if (!response.ok || !result.success) throw new Error(result.message || "操作失败");
+      return result;
+    }
+
+    function uploadDropFile() {
+      const file = $("#dropFile").files[0];
+      if (!file) { showToast("请先选择文件"); return; }
+      const hours = Number($("#dropHours").value) || 24;
+      const downloads = Number($("#dropDownloads").value) || 1;
+      const progress = $("#dropProgress");
+      const fill = progress.querySelector("span");
+      const button = $("#dropSubmit");
+      progress.classList.remove("hidden");
+      fill.style.width = "0%";
+      button.disabled = true;
+      const request = new XMLHttpRequest();
+      request.open("POST", `/drop-api/upload?hours=${encodeURIComponent(hours)}&downloads=${encodeURIComponent(downloads)}`);
+      request.withCredentials = true;
+      request.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+      request.setRequestHeader("X-File-Name", encodeURIComponent(file.name));
+      request.upload.onprogress = event => { if (event.lengthComputable) fill.style.width = `${Math.round(event.loaded / event.total * 100)}%`; };
+      request.onload = async () => {
+        button.disabled = false;
+        let result = {};
+        try { result = JSON.parse(request.responseText); } catch (error) {}
+        if (request.status === 401) { window.location.href = `${CONTROL_API}/auth`; return; }
+        if (request.status < 200 || request.status >= 300 || !result.success) { showToast(result.message || `上传失败：HTTP ${request.status}`); return; }
+        fill.style.width = "100%";
+        $("#dropForm").reset();
+        $("#dropHours").value = "24";
+        $("#dropDownloads").value = "1";
+        await copyText(result.file.url);
+        showToast("投递链接已生成并复制");
+        await loadToolsStatus(true);
+        setTimeout(() => progress.classList.add("hidden"), 800);
+      };
+      request.onerror = () => { button.disabled = false; showToast("上传连接失败"); };
+      request.send(file);
     }
 
     function renderControl(data) {
       controlData = data;
+      unlockPrivateViews(true);
       $("#controlLocked").classList.add("hidden");
       $("#controlWorkspace").classList.remove("hidden");
+      renderDaily(data.daily || {});
+      renderCloud(data.cloud || {});
+      renderArchitecture();
       const watchdog = data.watchdog || {};
       const auto = data.japan_auto || {};
       const current = (auto.backends || []).find(item => item.current);
@@ -1287,7 +1621,7 @@
       $("#backupLatest").textContent = archives.length ? `最新 ${compactTime(archives[0].created_at)} · ${formatFileSize(archives[0].size)}` : "尚未创建备份";
       $("#backupList").innerHTML = archives.slice(0, 5).map(item => `<div class="backup-row"><span class="backup-name" title="${escapeAttr(item.name)}">${escapeHtml(item.name)}</span><span class="backup-size">${formatFileSize(item.size)}</span></div>`).join("") || '<div class="empty-state">首次备份将在每天 09:25 自动创建。</div>';
 
-      const actionNames = { refresh_status: "重新生成状态", watchdog_scan: "运行自愈检查", restart_service: "重启服务", switch_japan_auto: "切换 Japan Auto", resume_japan_auto: "恢复自动模式", run_task: "运行计划任务", enable_task: "启用计划任务", disable_task: "暂停计划任务", test_notification: "测试通知", create_backup: "创建备份", verify_backup: "校验备份" };
+      const actionNames = { refresh_status: "重新生成状态", refresh_daily: "刷新今日数据", refresh_cloud: "刷新 Azure 用量", watchdog_scan: "运行自愈检查", restart_service: "重启服务", switch_japan_auto: "切换 Japan Auto", resume_japan_auto: "恢复自动模式", run_task: "运行计划任务", enable_task: "启用计划任务", disable_task: "暂停计划任务", test_notification: "测试通知", create_backup: "创建备份", verify_backup: "校验备份" };
       $("#controlEventList").innerHTML = (data.events || []).map(event => `<div class="event-row"><span class="event-time">${escapeHtml(compactTime(event.at))}</span><span class="event-copy"><strong>${event.ok ? "完成" : "失败"} · ${escapeHtml(actionNames[event.action] || event.action)}</strong>${escapeHtml(event.target || "")} · ${escapeHtml(event.detail || "")}</span></div>`).join("") || '<div class="empty-state">暂无手动操作。</div>';
       refreshIcons();
     }
@@ -1298,6 +1632,7 @@
       try {
         const response = await fetch(`${CONTROL_API}/status?ts=${Date.now()}`, { cache: "no-store", credentials: "same-origin" });
         if (response.status === 401) {
+          unlockPrivateViews(false);
           $("#controlLocked").classList.remove("hidden");
           $("#controlWorkspace").classList.add("hidden");
           return;
@@ -1371,7 +1706,9 @@
       $("#pageTitle").textContent = VIEW_TITLES[view];
       $("#mobilePageTitle").textContent = VIEW_TITLES[view];
       if (view === "fleet") renderTable();
-      if (view === "control") loadControlStatus(true);
+      if (["control", "today", "resources", "tools", "architecture"].includes(view)) loadControlStatus(true);
+      if (view === "tools") loadToolsStatus(true);
+      if (view === "architecture") setTimeout(() => { renderArchitecture(); drawArchitectureLines(); }, 30);
       history.replaceState(null, "", `#${view}`);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -1420,6 +1757,18 @@
       $("#closeLogDialog").addEventListener("click", () => $("#logDialog").close());
       $("#logDialog").addEventListener("click", event => { if (event.target === $("#logDialog")) $("#logDialog").close(); });
       $("#reloadControl").addEventListener("click", () => loadControlStatus());
+      $("#reloadTools").addEventListener("click", () => loadToolsStatus());
+      $("#dropForm").addEventListener("submit", event => { event.preventDefault(); uploadDropFile(); });
+      $("#webhookForm").addEventListener("submit", async event => {
+        event.preventDefault();
+        try {
+          const result = await toolsPost("/webhook-api/create", { name: $("#webhookName").value, source: $("#webhookSource").value, channels: ["wechat"] });
+          $("#webhookForm").reset();
+          await copyText(result.webhook.url);
+          showToast("Webhook 已创建，地址已复制");
+          await loadToolsStatus(true);
+        } catch (error) { showToast(error.message); }
+      });
       $("#resumeJapanAuto").addEventListener("click", () => runControlAction("resume_japan_auto", "auto", "恢复自动模式后，Japan Auto 会立即按优先级、健康和流量重新选择后端。继续吗？"));
       document.addEventListener("click", event => { const row = event.target.closest("[data-server-name]"); if (row) showServer(row.dataset.serverName); });
       document.addEventListener("click", event => {
@@ -1442,10 +1791,19 @@
         if (notificationButton) runControlAction("test_notification", notificationButton.dataset.testNotification, `向 ${notificationButton.dataset.channelLabel} 发送一条测试通知？`);
         const backupButton = event.target.closest("[data-backup-action]");
         if (backupButton) runControlAction(backupButton.dataset.backupAction, "control-plane", backupButton.dataset.backupAction === "create_backup" ? "立即创建一份控制中枢备份？" : "");
+        const copyButton = event.target.closest("[data-copy-value]");
+        if (copyButton) copyText(copyButton.dataset.copyValue);
+        const deleteDrop = event.target.closest("[data-delete-drop]");
+        if (deleteDrop && window.confirm("删除这个文件及其投递链接？")) toolsPost("/drop-api/delete", { id: Number(deleteDrop.dataset.deleteDrop) }).then(result => { showToast(result.message); loadToolsStatus(true); }).catch(error => showToast(error.message));
+        const testHook = event.target.closest("[data-test-hook]");
+        if (testHook) toolsPost("/webhook-api/test", { id: Number(testHook.dataset.testHook) }).then(result => { showToast(result.message); loadToolsStatus(true); }).catch(error => showToast(error.message));
+        const deleteHook = event.target.closest("[data-delete-hook]");
+        if (deleteHook && window.confirm("删除这个 Webhook 地址？外部系统中的旧地址会立即失效。")) toolsPost("/webhook-api/delete", { id: Number(deleteHook.dataset.deleteHook) }).then(result => { showToast(result.message); loadToolsStatus(true); }).catch(error => showToast(error.message));
       });
       $$(".segment").forEach(button => button.addEventListener("click", () => { currentFilter = button.dataset.filter; $$(".segment").forEach(item => item.classList.toggle("active", item === button)); renderTable(); }));
       $("#fleetSearch").addEventListener("input", renderTable);
       $("#globalSearch").addEventListener("keydown", event => { if (event.key === "Enter") runGlobalSearch(event.currentTarget.value); });
+      window.addEventListener("resize", () => { clearTimeout(window.__archTimer); window.__archTimer = setTimeout(drawArchitectureLines, 120); });
       const initialView = location.hash.slice(1);
       if (VIEW_TITLES[initialView]) switchView(initialView);
     }

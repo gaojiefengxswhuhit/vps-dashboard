@@ -1,0 +1,30 @@
+# Replace STATUS_PASSWORD_HASH with a hash from `caddy hash-password`.
+status.xushuo.uk {
+	header -Alt-Svc
+
+	@control path /control-api/*
+	handle @control {
+		basic_auth {
+			xushuo STATUS_PASSWORD_HASH
+		}
+		reverse_proxy 127.0.0.1:8790
+	}
+
+	@toolsAdmin path /drop-api/* /webhook-api/* /tool-api/*
+	handle @toolsAdmin {
+		basic_auth {
+			xushuo STATUS_PASSWORD_HASH
+		}
+		reverse_proxy 127.0.0.1:8791
+	}
+
+	@toolsPublic path /d/* /hook/*
+	handle @toolsPublic {
+		reverse_proxy 127.0.0.1:8791
+	}
+
+	handle {
+		root * /srv/vps-status
+		file_server
+	}
+}

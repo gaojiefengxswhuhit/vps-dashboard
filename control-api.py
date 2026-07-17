@@ -25,7 +25,12 @@ JP_STATE = BOT_DIR / "jp-auto-switcher-state.json"
 JP_CONFIG = BOT_DIR / "jp-auto-switcher-config.json"
 JP_LOCK = Path("/tmp/jp_auto_switcher.lock")
 STATUS_SCRIPT = Path("/root/vps-status/publish_status.py")
+STATUS_JSON = Path("/srv/vps-status/vps-status.json")
 EVENT_FILE = Path("/var/lib/xushuo-control/events.json")
+DAILY_CACHE = Path("/var/lib/xushuo-control/daily-dashboard.json")
+DAILY_SCRIPT = Path("/opt/xushuo-control/daily-dashboard.py")
+AZURE_CACHE = BOT_DIR / "azure_monitor_traffic_cache.json"
+AZURE_SCRIPT = BOT_DIR / "azure_monitor_traffic.py"
 BACKUP_DIR = Path("/var/backups/xushuo-control")
 BACKUP_SCRIPT = Path("/opt/xushuo-control/backup-system.py")
 CRONTAB = Path("/usr/bin/crontab")
@@ -45,6 +50,7 @@ SERVICE_SPECS = {
     "openlist.service": "OpenList",
     "cliproxyapi.service": "CPA",
     "marzban-node.service": "Marzban Node",
+    "xushuo-tools-api.service": "投递与 Webhook",
 }
 
 TASK_SPECS = {
@@ -103,6 +109,13 @@ TASK_SPECS = {
         "schedule": "每天 09:25",
         "log": BACKUP_DIR,
         "run": ["/usr/bin/python3", str(BACKUP_SCRIPT)],
+    },
+    "daily_dashboard": {
+        "label": "今日驾驶舱数据",
+        "marker": "# xushuo_daily_dashboard",
+        "schedule": "每 15 分钟",
+        "log": DAILY_CACHE,
+        "run": ["/usr/bin/python3", str(DAILY_SCRIPT), "--json"],
     },
 }
 
@@ -399,6 +412,62 @@ def sanitized_japan_auto() -> dict:
     }
 
 
+def daily_dashboard_status() -> dict:
+    data = load_json(DAILY_CACHE, {})
+    return data if isinstance(data, dict) else {}
+
+
+def cloud_resource_status() -> dict:
+    azure = load_json(AZURE_CACHE, {})
+    accounts = []
+    for item in azure.get("accounts") or []:
+        quota = float(item.get("quota_gb") or 0)
+        used = float(item.get("total_out_gb") or 0)
+        accounts.append({
+            "id": str(item.get("name") or ""),
+            "label": str(item.get("label") or item.get("name") or "Azure"),
+            "quota_gb": round(quota, 2),
+            "out_gb": round(used, 2),
+            "monitor_out_gb": round(float(item.get("monitor_out_gb") or 0), 2),
+            "billing_out_gb": round(float(item.get("billing_out_gb") or 0), 2),
+            "remaining_gb": round(float(item.get("remaining_gb") if item.get("remaining_gb") is not None else max(quota - used, 0)), 2),
+            "percent": round((used / quota * 100) if quota else 0, 1),
+            "billing_error": str(item.get("billing_error") or ""),
+            "failures": list(item.get("failures") or []),
+            "nodes": [
+                {
+                    "name": str(node.get("label") or "Azure VM"),
+                    "out_gb": round(float(node.get("out_gb") or node.get("gb") or 0), 2),
+                    "in_gb": round(float(node.get("in_gb") or 0), 2),
+                }
+                for node in item.get("nodes") or []
+            ],
+        })
+
+    status = load_json(STATUS_JSON, {})
+    servers = status.get("servers") or []
+    def provider_nodes(keyword: str) -> list[dict]:
+        return [
+            {"name": str(node.get("name") or ""), "online": bool(node.get("online")), "ip": str(node.get("ip") or "")}
+            for node in servers if keyword in str(node.get("name") or "").lower()
+        ]
+
+    providers = [
+        {"id": "azure", "label": "Azure", "billing_connected": bool(accounts), "resource_count": len(provider_nodes("azure")), "nodes": provider_nodes("azure")},
+        {"id": "gcp", "label": "Google Cloud", "billing_connected": False, "resource_count": len(provider_nodes("gcp")), "nodes": provider_nodes("gcp")},
+        {"id": "oracle", "label": "Oracle Cloud", "billing_connected": False, "resource_count": len(provider_nodes("oracle")), "nodes": provider_nodes("oracle")},
+        {"id": "cloudflare", "label": "Cloudflare", "billing_connected": False, "resource_count": 4, "services": ["DNS / Proxy", "Pages", "Workers", "R2"]},
+    ]
+    return {
+        "month": azure.get("month"),
+        "start": azure.get("start"),
+        "end": azure.get("end"),
+        "cached_at": azure.get("cached_at"),
+        "accounts": accounts,
+        "providers": providers,
+    }
+
+
 def control_status() -> dict:
     watchdog = load_json(WATCHDOG_STATE)
     watchdog_services = watchdog.get("services") or {}
@@ -425,6 +494,8 @@ def control_status() -> dict:
         },
         "services": services,
         "japan_auto": sanitized_japan_auto(),
+        "daily": daily_dashboard_status(),
+        "cloud": cloud_resource_status(),
         "notifications": notification_status(),
         "tasks": scheduled_tasks(),
         "backups": backup_status(),
@@ -457,6 +528,16 @@ def run_action(payload: dict) -> tuple[int, dict]:
             ok, detail = command(["/usr/bin/python3", str(STATUS_SCRIPT)], timeout=120)
             record_event(action, "fleet", ok, detail or "状态 JSON 已重新生成")
             return (200 if ok else 500), {"success": ok, "message": "状态数据已重新生成" if ok else "状态生成失败", "detail": detail[-1000:]}
+
+        if action == "refresh_daily":
+            ok, detail = command(["/usr/bin/python3", str(DAILY_SCRIPT), "--json"], timeout=60)
+            record_event(action, "daily", ok, detail or "今日驾驶舱数据已更新")
+            return (200 if ok else 500), {"success": ok, "message": "今日数据已更新" if ok else "今日数据更新失败", "detail": detail[-1000:]}
+
+        if action == "refresh_cloud":
+            ok, detail = command(["/usr/bin/python3", str(AZURE_SCRIPT), "--refresh-cache", "--json"], timeout=240)
+            record_event(action, "azure", ok, detail or "Azure 用量缓存已更新")
+            return (200 if ok else 500), {"success": ok, "message": "Azure 用量已更新" if ok else "Azure 用量更新失败", "detail": detail[-1000:]}
 
         if action == "watchdog_scan":
             ok, detail = command(["/usr/bin/python3", str(BOT_DIR / "service_watchdog.py"), "--once"], timeout=90)

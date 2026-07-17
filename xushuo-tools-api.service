@@ -1,0 +1,21 @@
+[Unit]
+Description=xushuo private tools API
+After=network-online.target weixin-push-worker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/xushuo-control
+ExecStart=/usr/bin/python3 /opt/xushuo-control/xushuo-tools-api.py
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/xushuo-tools /srv/xushuo-drop /var/lib/weixin-push /tmp
+
+[Install]
+WantedBy=multi-user.target
