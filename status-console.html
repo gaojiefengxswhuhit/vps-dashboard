@@ -434,6 +434,118 @@
     .architecture-items { margin-top: 10px; display: grid; gap: 5px; }
     .architecture-item { padding: 6px 8px; border-left: 2px solid var(--line-strong); color: #45535a; background: var(--surface-soft); font-size: 10px; line-height: 1.4; }
 
+    .control-locked {
+      min-height: 310px;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .lock-symbol {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      border-radius: 8px;
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+    .control-locked h3 { margin: 0; font-size: 18px; }
+    .control-locked p { max-width: 480px; margin: 8px auto 16px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .control-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .control-summary-item { min-height: 86px; padding: 13px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .control-summary-label { color: var(--subtle); font-size: 10px; font-weight: 750; }
+    .control-summary-value { margin-top: 8px; font-size: 17px; font-weight: 780; overflow-wrap: anywhere; }
+    .control-summary-note { margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .control-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(310px, .85fr); gap: 14px; margin-top: 14px; }
+    .control-panel { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .control-panel-body { padding: 14px; }
+    .maintenance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .maintenance-action {
+      min-height: 90px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      background: var(--surface-soft);
+      cursor: pointer;
+      text-align: left;
+    }
+    .maintenance-action:hover { border-color: #aebbc2; background: #f4f7f8; }
+    .maintenance-action:disabled { cursor: wait; opacity: .55; }
+    .maintenance-action svg { flex: 0 0 auto; margin-top: 1px; color: var(--blue); }
+    .maintenance-title { font-size: 12px; font-weight: 750; }
+    .maintenance-copy { margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .service-control-list { padding: 2px 0; }
+    .service-control-row {
+      min-height: 56px;
+      display: grid;
+      grid-template-columns: minmax(135px, 1fr) minmax(140px, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-bottom: 1px solid #edf0f2;
+    }
+    .service-control-row:last-child { border-bottom: 0; }
+    .service-control-name { font-size: 11px; font-weight: 750; }
+    .service-control-state { display: flex; align-items: center; gap: 7px; color: var(--green); font-size: 10px; font-weight: 700; }
+    .service-control-state.bad { color: var(--red); }
+    .service-control-reason { margin-top: 2px; color: var(--subtle); font-size: 9px; font-weight: 400; }
+    .service-control-actions { display: flex; gap: 5px; }
+    .mini-btn {
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 0 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 5px;
+      color: #3d4b52;
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: 750;
+    }
+    .mini-btn:hover { background: var(--surface-strong); }
+    .mini-btn:disabled { cursor: wait; opacity: .5; }
+    .mini-btn svg { width: 13px; height: 13px; }
+    .backend-grid { display: grid; gap: 8px; }
+    .backend-row { padding: 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-soft); }
+    .backend-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .backend-name { font-size: 11px; font-weight: 750; line-height: 1.45; }
+    .backend-ip { margin-top: 2px; color: var(--subtle); font-family: "Cascadia Mono", Consolas, monospace; font-size: 9px; }
+    .backend-badges { display: flex; align-items: center; gap: 5px; }
+    .state-chip { padding: 3px 6px; border-radius: 4px; color: var(--green); background: var(--green-soft); font-size: 8px; font-weight: 800; }
+    .state-chip.current { color: var(--blue); background: var(--blue-soft); }
+    .state-chip.bad { color: var(--red); background: var(--red-soft); }
+    .backend-row .mini-btn { width: 100%; margin-top: 9px; }
+    .usage-list { display: grid; gap: 11px; }
+    .usage-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 10px; }
+    .usage-label { min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .usage-value { color: var(--muted); white-space: nowrap; }
+    .usage-track { height: 6px; margin-top: 6px; overflow: hidden; border-radius: 999px; background: var(--surface-strong); }
+    .usage-fill { height: 100%; border-radius: inherit; background: var(--teal); }
+    .usage-fill.warn { background: var(--amber); }
+    .usage-fill.bad { background: var(--red); }
+    .event-list { display: grid; gap: 0; }
+    .event-row { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 9px; padding: 9px 0; border-bottom: 1px solid #edf0f2; }
+    .event-row:last-child { border-bottom: 0; }
+    .event-time { color: var(--subtle); font-size: 9px; }
+    .event-copy { font-size: 10px; line-height: 1.45; }
+    .event-copy strong { display: block; margin-bottom: 2px; }
+    .log-dialog { width: min(780px, calc(100vw - 28px)); max-height: min(760px, calc(100vh - 28px)); padding: 0; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--text); background: var(--surface); box-shadow: 0 24px 70px rgba(21,33,38,.24); }
+    .log-dialog::backdrop { background: rgba(16,26,31,.42); backdrop-filter: blur(2px); }
+    .log-output { max-height: 560px; margin: 0; padding: 14px; overflow: auto; color: #d5e1e6; background: #172126; font-family: "Cascadia Mono", Consolas, monospace; font-size: 10px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+
     .detail-dialog {
       width: min(520px, calc(100vw - 28px));
       max-height: min(760px, calc(100vh - 28px));
@@ -551,13 +663,22 @@
       .architecture-node { padding: 16px 0 16px 46px; }
       .architecture-icon { top: 14px; left: 0; }
       .detail-dialog { width: calc(100vw - 16px); max-height: calc(100vh - 16px); }
+      .control-summary { grid-template-columns: 1fr; gap: 8px; }
+      .control-summary-item { min-height: 72px; }
+      .control-grid { grid-template-columns: 1fr; gap: 10px; }
+      .maintenance-grid { grid-template-columns: 1fr; }
+      .service-control-row { grid-template-columns: minmax(0, 1fr) auto; }
+      .service-control-row > :nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+      .service-control-actions { grid-column: 2; grid-row: 1; }
+      .event-row { grid-template-columns: 66px minmax(0, 1fr); }
+      .log-dialog { width: calc(100vw - 16px); max-height: calc(100vh - 16px); }
       .bottom-nav {
         position: fixed;
         z-index: 40;
         inset: auto 0 0;
         height: calc(62px + env(safe-area-inset-bottom));
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
         padding: 4px 6px env(safe-area-inset-bottom);
         border-top: 1px solid var(--line);
         background: rgba(255,255,255,.97);
@@ -601,6 +722,7 @@
         <button class="nav-link active" data-view-target="overview"><i data-lucide="layout-dashboard"></i><span>总览</span></button>
         <button class="nav-link" data-view-target="services"><i data-lucide="panels-top-left"></i><span>服务入口</span><span class="nav-count">8</span></button>
         <button class="nav-link" data-view-target="fleet"><i data-lucide="server"></i><span>机器</span><span class="nav-count" id="navFleetCount">--</span></button>
+        <button class="nav-link" data-view-target="control"><i data-lucide="sliders-horizontal"></i><span>控制</span></button>
         <button class="nav-link" data-view-target="architecture"><i data-lucide="workflow"></i><span>架构</span></button>
       </nav>
       <div class="sidebar-foot">
@@ -614,6 +736,7 @@
         <div><div class="page-kicker">XUSHUO CLOUD</div><h1 class="page-title" id="pageTitle">运行总览</h1></div>
         <div class="top-actions">
           <label class="search-box" aria-label="搜索机器与服务"><i data-lucide="search"></i><input id="globalSearch" placeholder="搜索机器、IP 或服务" autocomplete="off" /></label>
+          <button class="text-btn primary" data-view-target="control" type="button"><i data-lucide="sliders-horizontal"></i>控制</button>
           <a class="icon-btn" href="./vps-status.json" target="_blank" title="打开原始状态 JSON"><i data-lucide="braces"></i></a>
           <button class="icon-btn" id="refreshButton" type="button" title="立即刷新"><i data-lucide="refresh-cw"></i></button>
         </div>
@@ -622,6 +745,7 @@
       <header class="mobile-header">
         <div class="mobile-brand"><div class="brand-mark">X</div><span id="mobilePageTitle">运行总览</span></div>
         <div class="mobile-actions">
+          <button class="icon-btn primary" data-view-target="control" type="button" title="打开控制中心"><i data-lucide="sliders-horizontal"></i></button>
           <a class="icon-btn" href="./vps-status.json" target="_blank" title="状态 JSON"><i data-lucide="braces"></i></a>
           <button class="icon-btn" id="mobileRefreshButton" type="button" title="立即刷新"><i data-lucide="refresh-cw"></i></button>
         </div>
@@ -691,6 +815,63 @@
           </div>
         </section>
 
+        <section class="view" data-view="control">
+          <div class="section-head"><div><h2>控制中心</h2><p>白名单操作会在 Azure SG 上真实执行，并记录最近操作</p></div><button class="section-link" id="reloadControl" type="button">刷新控制状态</button></div>
+
+          <div class="control-locked" id="controlLocked">
+            <div>
+              <span class="lock-symbol"><i data-lucide="lock-keyhole"></i></span>
+              <h3>控制功能已锁定</h3>
+              <p>状态页仍可公开查看，但重启服务、执行自愈和切换 Japan Auto 需要单独验证。登录后浏览器会在当前会话中记住授权。</p>
+              <a class="text-btn primary" href="/control-api/auth"><i data-lucide="unlock-keyhole"></i>登录并解锁控制</a>
+            </div>
+          </div>
+
+          <div class="hidden" id="controlWorkspace">
+            <div class="control-summary">
+              <article class="control-summary-item"><div class="control-summary-label">受控服务</div><div class="control-summary-value" id="controlServiceHealth">--/--</div><div class="control-summary-note">自愈探测健康数量</div></article>
+              <article class="control-summary-item"><div class="control-summary-label">Japan Auto 当前后端</div><div class="control-summary-value" id="controlJapanCurrent">--</div><div class="control-summary-note" id="controlJapanMode">自动选择</div></article>
+              <article class="control-summary-item"><div class="control-summary-label">最近检查</div><div class="control-summary-value" id="controlLastCheck">--</div><div class="control-summary-note">服务 Watchdog</div></article>
+            </div>
+
+            <div class="control-grid">
+              <div>
+                <section class="control-panel">
+                  <div class="panel-head"><div><div class="panel-title">服务控制</div><div class="panel-subtitle">日志与白名单重启</div></div><span class="panel-subtitle" id="controlledServiceCount">--</span></div>
+                  <div class="service-control-list" id="serviceControlList"><div class="empty-state">正在读取...</div></div>
+                </section>
+
+                <section class="control-panel section-block">
+                  <div class="panel-head"><div><div class="panel-title">维护操作</div><div class="panel-subtitle">立即执行一次后台任务</div></div></div>
+                  <div class="control-panel-body">
+                    <div class="maintenance-grid">
+                      <button class="maintenance-action" data-control-action="refresh_status" type="button"><i data-lucide="refresh-cw"></i><span><span class="maintenance-title">重新生成状态</span><span class="maintenance-copy">立即运行 publish_status.py，不等下一分钟计划任务。</span></span></button>
+                      <button class="maintenance-action" data-control-action="watchdog_scan" type="button"><i data-lucide="shield-check"></i><span><span class="maintenance-title">运行自愈检查</span><span class="maintenance-copy">检查 14 项控制服务，连续异常时执行修复。</span></span></button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <div>
+                <section class="control-panel">
+                  <div class="panel-head"><div><div class="panel-title">Japan Auto</div><div class="panel-subtitle" id="japanAutoReason">正在读取选择原因...</div></div><button class="mini-btn" id="resumeJapanAuto" type="button"><i data-lucide="rotate-ccw"></i>恢复自动</button></div>
+                  <div class="control-panel-body"><div class="backend-grid" id="japanBackendList"></div></div>
+                </section>
+
+                <section class="control-panel section-block">
+                  <div class="panel-head"><div><div class="panel-title">账号出站流量</div><div class="panel-subtitle">80 GB 触发切换</div></div></div>
+                  <div class="control-panel-body"><div class="usage-list" id="accountUsageList"></div></div>
+                </section>
+
+                <section class="control-panel section-block">
+                  <div class="panel-head"><div><div class="panel-title">最近操作</div><div class="panel-subtitle">控制 API 审计记录</div></div></div>
+                  <div class="control-panel-body"><div class="event-list" id="controlEventList"><div class="empty-state">暂无手动操作</div></div></div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section class="view" data-view="architecture">
           <div class="section-head"><div><h2>服务架构</h2><p>从代码发布、域名入口到控制中枢和执行节点</p></div></div>
           <div class="architecture">
@@ -717,6 +898,7 @@
     <button class="bottom-link active" data-view-target="overview"><i data-lucide="layout-dashboard"></i><span>总览</span></button>
     <button class="bottom-link" data-view-target="services"><i data-lucide="panels-top-left"></i><span>服务</span></button>
     <button class="bottom-link" data-view-target="fleet"><i data-lucide="server"></i><span>机器</span></button>
+    <button class="bottom-link" data-view-target="control"><i data-lucide="sliders-horizontal"></i><span>控制</span></button>
     <button class="bottom-link" data-view-target="architecture"><i data-lucide="workflow"></i><span>架构</span></button>
   </nav>
 
@@ -727,10 +909,18 @@
     </div>
     <div class="dialog-body" id="dialogBody"></div>
   </dialog>
+  <dialog class="log-dialog" id="logDialog">
+    <div class="dialog-head">
+      <div><div class="dialog-title" id="logTitle">服务日志</div><div class="dialog-subtitle">最近 100 行</div></div>
+      <button class="icon-btn" id="closeLogDialog" type="button" title="关闭"><i data-lucide="x"></i></button>
+    </div>
+    <pre class="log-output" id="logOutput">正在读取...</pre>
+  </dialog>
   <div class="toast" id="toast">已复制</div>
 
   <script>
     const DATA_URL = "./vps-status.json";
+    const CONTROL_API = "/control-api";
     const REFRESH_MS = 30000;
     const SSH_OVERRIDES = {
       "JP NAT": 'ssh -i "D:\\Download\\xushuo_key.pem" root@154.36.187.99 -p 10475',
@@ -751,10 +941,12 @@
       [/KR|Korea|韩国/i, "KR"], [/London|United Kingdom|英国|Oracle/i, "GB"], [/(^|\s)DE(\s|$)|Germany|德国/i, "DE"],
       [/US|Dallas|Iowa|United States|美国/i, "US"],
     ];
-    const VIEW_TITLES = { overview: "运行总览", services: "服务入口", fleet: "机器", architecture: "服务架构" };
+    const VIEW_TITLES = { overview: "运行总览", services: "服务入口", fleet: "机器", control: "控制中心", architecture: "服务架构" };
     let statusData = null;
     let servers = [];
     let currentFilter = "all";
+    let controlData = null;
+    let controlLoading = false;
     let toastTimer = null;
 
     const $ = selector => document.querySelector(selector);
@@ -974,6 +1166,128 @@
       toastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
     }
 
+    function compactTime(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "--";
+      return date.toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+    }
+
+    function renderControl(data) {
+      controlData = data;
+      $("#controlLocked").classList.add("hidden");
+      $("#controlWorkspace").classList.remove("hidden");
+      const watchdog = data.watchdog || {};
+      const auto = data.japan_auto || {};
+      const current = (auto.backends || []).find(item => item.current);
+      $("#controlServiceHealth").textContent = `${watchdog.healthy ?? "--"}/${watchdog.total ?? "--"}`;
+      $("#controlJapanCurrent").textContent = current?.label || auto.chosen || "未选择";
+      $("#controlJapanMode").textContent = auto.manual_override?.active
+        ? `手动保持至 ${compactTime(auto.manual_override.until)}`
+        : "按优先级、健康和流量自动选择";
+      $("#controlLastCheck").textContent = compactTime(watchdog.last_scan_at);
+      $("#controlledServiceCount").textContent = `${(data.services || []).filter(item => item.active).length}/${(data.services || []).length} active`;
+
+      $("#serviceControlList").innerHTML = (data.services || []).map(service => `
+        <div class="service-control-row">
+          <div class="service-control-name">${escapeHtml(service.label)}<div class="server-ip">${escapeHtml(service.unit)}</div></div>
+          <div class="service-control-state ${service.active && service.healthy ? "" : "bad"}"><span class="status-dot"></span><span>${service.active && service.healthy ? "健康" : "异常"}<span class="service-control-reason">${escapeHtml(service.reason || service.status)}</span></span></div>
+          <div class="service-control-actions">
+            <button class="mini-btn" data-log-unit="${escapeAttr(service.unit)}" data-log-label="${escapeAttr(service.label)}" type="button" title="查看日志"><i data-lucide="scroll-text"></i>日志</button>
+            <button class="mini-btn" data-restart-unit="${escapeAttr(service.unit)}" data-restart-label="${escapeAttr(service.label)}" type="button" title="重启服务"><i data-lucide="rotate-cw"></i>重启</button>
+          </div>
+        </div>`).join("") || '<div class="empty-state">没有可控服务。</div>';
+
+      $("#japanAutoReason").textContent = auto.reason || "暂无切换说明";
+      $("#resumeJapanAuto").disabled = !auto.manual_override?.active;
+      $("#japanBackendList").innerHTML = (auto.backends || []).map(backend => `
+        <div class="backend-row">
+          <div class="backend-top"><div><div class="backend-name">${escapeHtml(backend.label)}</div><div class="backend-ip">${escapeHtml(backend.ip)}</div></div><div class="backend-badges">${backend.current ? '<span class="state-chip current">当前</span>' : ""}<span class="state-chip ${backend.healthy ? "" : "bad"}">${backend.healthy ? "健康" : "异常"}</span></div></div>
+          <button class="mini-btn" data-switch-backend="${escapeAttr(backend.name)}" data-switch-label="${escapeAttr(backend.label)}" type="button" ${backend.current ? "disabled" : ""}><i data-lucide="shuffle"></i>${backend.current ? "正在使用" : "切换并保持 24 小时"}</button>
+        </div>`).join("") || '<div class="empty-state">没有读取到后端。</div>';
+
+      $("#accountUsageList").innerHTML = (auto.accounts || []).map(account => {
+        const width = Math.max(0, Math.min(100, Number(account.percent) || 0));
+        const tone = width >= 80 ? "bad" : width >= 65 ? "warn" : "";
+        return `<div><div class="usage-top"><span class="usage-label">${escapeHtml(account.label)}</span><span class="usage-value">${Number(account.used_gb).toFixed(1)} / ${Number(account.quota_gb).toFixed(0)} GB</span></div><div class="usage-track"><div class="usage-fill ${tone}" style="width:${width}%"></div></div></div>`;
+      }).join("") || '<div class="empty-state">没有流量数据。</div>';
+
+      const actionNames = { refresh_status: "重新生成状态", watchdog_scan: "运行自愈检查", restart_service: "重启服务", switch_japan_auto: "切换 Japan Auto", resume_japan_auto: "恢复自动模式" };
+      $("#controlEventList").innerHTML = (data.events || []).map(event => `<div class="event-row"><span class="event-time">${escapeHtml(compactTime(event.at))}</span><span class="event-copy"><strong>${event.ok ? "完成" : "失败"} · ${escapeHtml(actionNames[event.action] || event.action)}</strong>${escapeHtml(event.target || "")} · ${escapeHtml(event.detail || "")}</span></div>`).join("") || '<div class="empty-state">暂无手动操作。</div>';
+      refreshIcons();
+    }
+
+    async function loadControlStatus(silent = false) {
+      if (controlLoading) return;
+      controlLoading = true;
+      try {
+        const response = await fetch(`${CONTROL_API}/status?ts=${Date.now()}`, { cache: "no-store", credentials: "same-origin" });
+        if (response.status === 401) {
+          $("#controlLocked").classList.remove("hidden");
+          $("#controlWorkspace").classList.add("hidden");
+          return;
+        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        renderControl(await response.json());
+        if (!silent) showToast("控制状态已刷新");
+      } catch (error) {
+        if (!silent) showToast(`控制状态读取失败：${error.message}`);
+      } finally {
+        controlLoading = false;
+      }
+    }
+
+    function setControlButtonsBusy(busy) {
+      $$('[data-control-action], [data-restart-unit], [data-switch-backend], #resumeJapanAuto').forEach(button => {
+        if (busy) {
+          button.dataset.wasDisabled = button.disabled ? "1" : "0";
+          button.disabled = true;
+        } else if (button.dataset.wasDisabled === "0") {
+          button.disabled = false;
+        }
+      });
+    }
+
+    async function runControlAction(action, target = "", confirmation = "") {
+      if (confirmation && !window.confirm(confirmation)) return;
+      setControlButtonsBusy(true);
+      try {
+        const response = await fetch(`${CONTROL_API}/action`, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", "X-Control-Requested": "1" },
+          body: JSON.stringify({ action, target }),
+        });
+        if (response.status === 401) {
+          window.location.href = `${CONTROL_API}/auth`;
+          return;
+        }
+        const result = await response.json().catch(() => ({ message: `HTTP ${response.status}` }));
+        if (!response.ok || !result.success) throw new Error(result.message || "操作失败");
+        showToast(result.message || "操作已完成");
+        await loadControlStatus(true);
+        if (action === "refresh_status") await loadStatus();
+      } catch (error) {
+        showToast(error.message);
+      } finally {
+        setControlButtonsBusy(false);
+      }
+    }
+
+    async function showServiceLogs(unit, label) {
+      $("#logTitle").textContent = `${label} 日志`;
+      $("#logOutput").textContent = "正在读取...";
+      $("#logDialog").showModal();
+      try {
+        const response = await fetch(`${CONTROL_API}/logs?unit=${encodeURIComponent(unit)}&ts=${Date.now()}`, { cache: "no-store", credentials: "same-origin" });
+        if (response.status === 401) { $("#logDialog").close(); window.location.href = `${CONTROL_API}/auth`; return; }
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.message || "日志读取失败");
+        $("#logOutput").textContent = result.logs || "暂无日志";
+      } catch (error) {
+        $("#logOutput").textContent = `读取失败：${error.message}`;
+      }
+    }
+
     function switchView(view) {
       if (!VIEW_TITLES[view]) return;
       $$(".view").forEach(item => item.classList.toggle("active", item.dataset.view === view));
@@ -981,6 +1295,7 @@
       $("#pageTitle").textContent = VIEW_TITLES[view];
       $("#mobilePageTitle").textContent = VIEW_TITLES[view];
       if (view === "fleet") renderTable();
+      if (view === "control") loadControlStatus(true);
       history.replaceState(null, "", `#${view}`);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -1026,7 +1341,21 @@
       $("#mobileRefreshButton").addEventListener("click", () => loadStatus(true));
       $("#closeDialog").addEventListener("click", () => $("#serverDialog").close());
       $("#serverDialog").addEventListener("click", event => { if (event.target === $("#serverDialog")) $("#serverDialog").close(); });
+      $("#closeLogDialog").addEventListener("click", () => $("#logDialog").close());
+      $("#logDialog").addEventListener("click", event => { if (event.target === $("#logDialog")) $("#logDialog").close(); });
+      $("#reloadControl").addEventListener("click", () => loadControlStatus());
+      $("#resumeJapanAuto").addEventListener("click", () => runControlAction("resume_japan_auto", "auto", "恢复自动模式后，Japan Auto 会立即按优先级、健康和流量重新选择后端。继续吗？"));
       document.addEventListener("click", event => { const row = event.target.closest("[data-server-name]"); if (row) showServer(row.dataset.serverName); });
+      document.addEventListener("click", event => {
+        const actionButton = event.target.closest("[data-control-action]");
+        if (actionButton) runControlAction(actionButton.dataset.controlAction);
+        const restartButton = event.target.closest("[data-restart-unit]");
+        if (restartButton) runControlAction("restart_service", restartButton.dataset.restartUnit, `确定重启 ${restartButton.dataset.restartLabel}？短时间内相关功能会中断。`);
+        const logButton = event.target.closest("[data-log-unit]");
+        if (logButton) showServiceLogs(logButton.dataset.logUnit, logButton.dataset.logLabel);
+        const switchButton = event.target.closest("[data-switch-backend]");
+        if (switchButton) runControlAction("switch_japan_auto", switchButton.dataset.switchBackend, `确定切换到 ${switchButton.dataset.switchLabel}？该选择会保持 24 小时，健康或流量越限时仍会自动避让。`);
+      });
       $$(".segment").forEach(button => button.addEventListener("click", () => { currentFilter = button.dataset.filter; $$(".segment").forEach(item => item.classList.toggle("active", item === button)); renderTable(); }));
       $("#fleetSearch").addEventListener("input", renderTable);
       $("#globalSearch").addEventListener("keydown", event => { if (event.key === "Enter") runGlobalSearch(event.currentTarget.value); });

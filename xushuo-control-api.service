@@ -1,0 +1,20 @@
+[Unit]
+Description=xushuo authenticated control API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/xushuo-control
+ExecStart=/usr/bin/python3 /opt/xushuo-control/control-api.py
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectHome=read-only
+ProtectSystem=strict
+ReadWritePaths=/root/tg-node-bot /root/vps-status /srv/vps-status /var/lib/marzban /var/lib/xushuo-control /run /tmp
+
+[Install]
+WantedBy=multi-user.target
