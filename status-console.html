@@ -498,8 +498,34 @@
     .service-control-name { font-size: 11px; font-weight: 750; }
     .service-control-state { display: flex; align-items: center; gap: 7px; color: var(--green); font-size: 10px; font-weight: 700; }
     .service-control-state.bad { color: var(--red); }
-    .service-control-reason { margin-top: 2px; color: var(--subtle); font-size: 9px; font-weight: 400; }
+    .service-control-reason { display: block; margin-top: 2px; color: var(--subtle); font-size: 9px; font-weight: 400; }
     .service-control-actions { display: flex; gap: 5px; }
+    .ops-list { display: grid; }
+    .ops-row {
+      min-height: 62px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #edf0f2;
+    }
+    .ops-row:last-child { border-bottom: 0; }
+    .ops-title { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 750; }
+    .ops-title .status-dot { flex: 0 0 auto; color: var(--green); }
+    .ops-title .status-dot.bad { color: var(--red); }
+    .ops-meta { margin-top: 3px; color: var(--subtle); font-size: 9px; line-height: 1.5; }
+    .ops-actions { display: flex; gap: 5px; }
+    .channel-detail { margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .backup-overview { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .backup-count { font-size: 21px; font-weight: 780; }
+    .backup-caption { margin-top: 2px; color: var(--muted); font-size: 9px; }
+    .backup-actions { display: flex; gap: 5px; }
+    .backup-list { border-top: 1px solid var(--line); }
+    .backup-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 8px 0; border-bottom: 1px solid #edf0f2; font-size: 9px; }
+    .backup-row:last-child { border-bottom: 0; }
+    .backup-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: "Cascadia Mono", Consolas, monospace; }
+    .backup-size { color: var(--subtle); white-space: nowrap; }
     .mini-btn {
       height: 30px;
       display: inline-flex;
@@ -670,6 +696,11 @@
       .service-control-row { grid-template-columns: minmax(0, 1fr) auto; }
       .service-control-row > :nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
       .service-control-actions { grid-column: 2; grid-row: 1; }
+      .ops-row { align-items: flex-start; grid-template-columns: minmax(0, 1fr); }
+      .ops-actions { width: 100%; }
+      .ops-actions .mini-btn { flex: 1; }
+      .backup-overview { grid-template-columns: 1fr; }
+      .backup-actions .mini-btn { flex: 1; }
       .event-row { grid-template-columns: 66px minmax(0, 1fr); }
       .log-dialog { width: calc(100vw - 16px); max-height: calc(100vh - 16px); }
       .bottom-nav {
@@ -842,6 +873,11 @@
                 </section>
 
                 <section class="control-panel section-block">
+                  <div class="panel-head"><div><div class="panel-title">定时任务</div><div class="panel-subtitle">白名单任务可暂停、恢复和立即执行</div></div><span class="panel-subtitle" id="scheduledTaskCount">--</span></div>
+                  <div class="ops-list" id="scheduledTaskList"><div class="empty-state">正在读取...</div></div>
+                </section>
+
+                <section class="control-panel section-block">
                   <div class="panel-head"><div><div class="panel-title">维护操作</div><div class="panel-subtitle">立即执行一次后台任务</div></div></div>
                   <div class="control-panel-body">
                     <div class="maintenance-grid">
@@ -861,6 +897,19 @@
                 <section class="control-panel section-block">
                   <div class="panel-head"><div><div class="panel-title">账号出站流量</div><div class="panel-subtitle">80 GB 触发切换</div></div></div>
                   <div class="control-panel-body"><div class="usage-list" id="accountUsageList"></div></div>
+                </section>
+
+                <section class="control-panel section-block">
+                  <div class="panel-head"><div><div class="panel-title">通知中心</div><div class="panel-subtitle">Telegram、微信与邮件通道</div></div></div>
+                  <div class="ops-list" id="notificationChannelList"><div class="empty-state">正在读取...</div></div>
+                </section>
+
+                <section class="control-panel section-block">
+                  <div class="panel-head"><div><div class="panel-title">备份中心</div><div class="panel-subtitle">每日归档，保留最近 14 份</div></div></div>
+                  <div class="control-panel-body">
+                    <div class="backup-overview"><div><div class="backup-count" id="backupCount">--</div><div class="backup-caption" id="backupLatest">尚未创建备份</div></div><div class="backup-actions"><button class="mini-btn" data-backup-action="create_backup" type="button"><i data-lucide="archive"></i>立即备份</button><button class="mini-btn" data-backup-action="verify_backup" type="button"><i data-lucide="badge-check"></i>校验</button></div></div>
+                    <div class="backup-list" id="backupList"></div>
+                  </div>
                 </section>
 
                 <section class="control-panel section-block">
@@ -1172,6 +1221,13 @@
       return date.toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
     }
 
+    function formatFileSize(value) {
+      const bytes = Number(value) || 0;
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+    }
+
     function renderControl(data) {
       controlData = data;
       $("#controlLocked").classList.add("hidden");
@@ -1211,7 +1267,27 @@
         return `<div><div class="usage-top"><span class="usage-label">${escapeHtml(account.label)}</span><span class="usage-value">${Number(account.used_gb).toFixed(1)} / ${Number(account.quota_gb).toFixed(0)} GB</span></div><div class="usage-track"><div class="usage-fill ${tone}" style="width:${width}%"></div></div></div>`;
       }).join("") || '<div class="empty-state">没有流量数据。</div>';
 
-      const actionNames = { refresh_status: "重新生成状态", watchdog_scan: "运行自愈检查", restart_service: "重启服务", switch_japan_auto: "切换 Japan Auto", resume_japan_auto: "恢复自动模式" };
+      const tasks = data.tasks || [];
+      $("#scheduledTaskCount").textContent = `${tasks.filter(item => item.enabled).length}/${tasks.length} 启用`;
+      $("#scheduledTaskList").innerHTML = tasks.map(task => `
+        <div class="ops-row">
+          <div><div class="ops-title"><span class="status-dot ${task.enabled ? "" : "bad"}"></span>${escapeHtml(task.label)}</div><div class="ops-meta">${escapeHtml(task.schedule)} · ${task.last_run_at ? `最近 ${escapeHtml(compactTime(task.last_run_at))}` : "暂无运行记录"}</div></div>
+          <div class="ops-actions"><button class="mini-btn" data-run-task="${escapeAttr(task.id)}" data-task-label="${escapeAttr(task.label)}" type="button" ${task.present ? "" : "disabled"}><i data-lucide="play"></i>运行</button><button class="mini-btn" data-toggle-task="${escapeAttr(task.id)}" data-task-label="${escapeAttr(task.label)}" data-task-enabled="${task.enabled ? "1" : "0"}" type="button" ${task.present ? "" : "disabled"}><i data-lucide="${task.enabled ? "pause" : "play-circle"}"></i>${task.enabled ? "暂停" : "启用"}</button></div>
+        </div>`).join("") || '<div class="empty-state">没有计划任务。</div>';
+
+      $("#notificationChannelList").innerHTML = (data.notifications || []).map(channel => `
+        <div class="ops-row">
+          <div><div class="ops-title"><span class="status-dot ${channel.ready ? "" : "bad"}"></span>${escapeHtml(channel.label)}</div><div class="channel-detail">${escapeHtml(channel.detail || "")}${channel.last_at ? ` · 最近 ${escapeHtml(compactTime(channel.last_at))}` : ""}</div></div>
+          <div class="ops-actions"><button class="mini-btn" data-test-notification="${escapeAttr(channel.id)}" data-channel-label="${escapeAttr(channel.label)}" type="button" ${channel.ready ? "" : "disabled"}><i data-lucide="send"></i>测试</button></div>
+        </div>`).join("") || '<div class="empty-state">没有通知渠道。</div>';
+
+      const backups = data.backups || {};
+      const archives = backups.archives || [];
+      $("#backupCount").textContent = `${archives.length} 份`;
+      $("#backupLatest").textContent = archives.length ? `最新 ${compactTime(archives[0].created_at)} · ${formatFileSize(archives[0].size)}` : "尚未创建备份";
+      $("#backupList").innerHTML = archives.slice(0, 5).map(item => `<div class="backup-row"><span class="backup-name" title="${escapeAttr(item.name)}">${escapeHtml(item.name)}</span><span class="backup-size">${formatFileSize(item.size)}</span></div>`).join("") || '<div class="empty-state">首次备份将在每天 09:25 自动创建。</div>';
+
+      const actionNames = { refresh_status: "重新生成状态", watchdog_scan: "运行自愈检查", restart_service: "重启服务", switch_japan_auto: "切换 Japan Auto", resume_japan_auto: "恢复自动模式", run_task: "运行计划任务", enable_task: "启用计划任务", disable_task: "暂停计划任务", test_notification: "测试通知", create_backup: "创建备份", verify_backup: "校验备份" };
       $("#controlEventList").innerHTML = (data.events || []).map(event => `<div class="event-row"><span class="event-time">${escapeHtml(compactTime(event.at))}</span><span class="event-copy"><strong>${event.ok ? "完成" : "失败"} · ${escapeHtml(actionNames[event.action] || event.action)}</strong>${escapeHtml(event.target || "")} · ${escapeHtml(event.detail || "")}</span></div>`).join("") || '<div class="empty-state">暂无手动操作。</div>';
       refreshIcons();
     }
@@ -1237,7 +1313,7 @@
     }
 
     function setControlButtonsBusy(busy) {
-      $$('[data-control-action], [data-restart-unit], [data-switch-backend], #resumeJapanAuto').forEach(button => {
+      $$('[data-control-action], [data-restart-unit], [data-switch-backend], [data-run-task], [data-toggle-task], [data-test-notification], [data-backup-action], #resumeJapanAuto').forEach(button => {
         if (busy) {
           button.dataset.wasDisabled = button.disabled ? "1" : "0";
           button.disabled = true;
@@ -1355,6 +1431,17 @@
         if (logButton) showServiceLogs(logButton.dataset.logUnit, logButton.dataset.logLabel);
         const switchButton = event.target.closest("[data-switch-backend]");
         if (switchButton) runControlAction("switch_japan_auto", switchButton.dataset.switchBackend, `确定切换到 ${switchButton.dataset.switchLabel}？该选择会保持 24 小时，健康或流量越限时仍会自动避让。`);
+        const runTaskButton = event.target.closest("[data-run-task]");
+        if (runTaskButton) runControlAction("run_task", runTaskButton.dataset.runTask, `立即运行“${runTaskButton.dataset.taskLabel}”？该任务可能会产生一条正常通知。`);
+        const toggleTaskButton = event.target.closest("[data-toggle-task]");
+        if (toggleTaskButton) {
+          const enabled = toggleTaskButton.dataset.taskEnabled === "1";
+          runControlAction(enabled ? "disable_task" : "enable_task", toggleTaskButton.dataset.toggleTask, enabled ? `暂停“${toggleTaskButton.dataset.taskLabel}”后将不再自动运行，继续吗？` : "");
+        }
+        const notificationButton = event.target.closest("[data-test-notification]");
+        if (notificationButton) runControlAction("test_notification", notificationButton.dataset.testNotification, `向 ${notificationButton.dataset.channelLabel} 发送一条测试通知？`);
+        const backupButton = event.target.closest("[data-backup-action]");
+        if (backupButton) runControlAction(backupButton.dataset.backupAction, "control-plane", backupButton.dataset.backupAction === "create_backup" ? "立即创建一份控制中枢备份？" : "");
       });
       $$(".segment").forEach(button => button.addEventListener("click", () => { currentFilter = button.dataset.filter; $$(".segment").forEach(item => item.classList.toggle("active", item === button)); renderTable(); }));
       $("#fleetSearch").addEventListener("input", renderTable);

@@ -14,7 +14,7 @@ RestartSec=3
 NoNewPrivileges=true
 ProtectHome=read-only
 ProtectSystem=strict
-ReadWritePaths=/root/tg-node-bot /root/vps-status /srv/vps-status /var/lib/marzban /var/lib/xushuo-control /run /tmp
+ReadWritePaths=/root/tg-node-bot /root/vps-status /srv/vps-status /var/lib/marzban /var/lib/weixin-push /var/lib/xushuo-control /var/backups/xushuo-control /var/spool/cron /run /tmp
 
 [Install]
 WantedBy=multi-user.target
